@@ -1,0 +1,23 @@
+{
+  "name": "lab_backend",
+  "version": "1.0.0",
+  "description": "Laboratorio de Desarrollo BackEnd",
+  "homepage": "https://github.com/mfregenal/lab_backend#readme",
+  "bugs": {
+    "url": "https://github.com/mfregenal/lab_backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mfregenal/lab_backend.git"
+  },
+  "license": "ISC",
+  "author": "mfregenal",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
