@@ -4,8 +4,8 @@ import { obtenerProductos, obtenerProductosFiltrados, obtenerProductosporId, cre
 const router = express.Router();
 
 router.get('/', obtenerProductos);
-router.get('/:id', obtenerProductosporId);
 router.get('/filtrados', obtenerProductosFiltrados);
+router.get('/:id', obtenerProductosporId);
 router.post('/', crearProducto);
 router.delete('/:id', eliminarProducto);
 
