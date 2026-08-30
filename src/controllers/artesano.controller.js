@@ -1,10 +1,10 @@
 import {artesanos, siguienteId} from '../data/artesano.js';
 
-const obtenerArtesanos = (req, res) => {
+export const obtenerArtesanos = (req, res) => {
     res.json(artesanos);
 };
 
-const obtenerArtesanoId = (req, res) => {
+export const obtenerArtesanoId = (req, res) => {
     const id = parseInt(req.params.id);
     const artesano = artesanos.find(a => a.id === id);
 
@@ -15,7 +15,7 @@ const obtenerArtesanoId = (req, res) => {
     res.json(artesano);
 };
 
-const crearArtesano = (req, res) => {
+export const crearArtesano = (req, res) => {
     const { nombre, provincia, localidad, rubro } = req.body;
 
     if (!nombre || !rubro) {

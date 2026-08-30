@@ -3,8 +3,8 @@ import { obtenerArtesanos, obtenerArtesanoId, crearArtesano } from '../controlle
 
 const router = express.Router();
 
-router.get('/artesanos', obtenerArtesanos);
-router.get('/artesanos/:id', obtenerArtesanoId);
-router.post('/artesanos', crearArtesano);
+router.get('/', obtenerArtesanos);
+router.get('/:id', obtenerArtesanoId);
+router.post('/', crearArtesano);
 
 export default router;
