@@ -33,7 +33,7 @@ export const obtenerProductosporId = (req,res,next) => {
     );
 
     if (!producto) {
-        const error = new Error("El evento no existe.");
+        const error = new Error("El producto no existe.");
         error.status = 404;
 
         return next(error);
@@ -56,14 +56,14 @@ export const crearProducto = (req,res,next)=>{
     }
 
     const nuevoProducto = {
-        id: siguienteId,
+        id: siguienteId(),
         nombre: req.body.nombre,
         precio: req.body.precio
     };
 
     productos.push(nuevoProducto);
 
-    res.status(201).json(nuevoEvento);
+    res.status(201).json(nuevoProducto);
 };
 
 // DELETE de productos
@@ -73,7 +73,9 @@ export const eliminarProducto = (req, res, next) => {
     const indice = productos.findIndex(producto => producto.id === id);
 
     if (indice === -1) {
-        return next(crearError(`no existe un producto con id ${req.id}`, 404));
+        const error= new Error(`no existe un producto con id ${id}`);
+        error.status=404;
+        return next(error);
     }
 
     productos.splice(indice, 1);
