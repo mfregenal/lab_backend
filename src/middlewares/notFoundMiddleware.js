@@ -1,5 +1,5 @@
-export const notFoundMiddleware = ( req, res, next) => {
-  const error = new Error( `Ruta no encontrada - ${req.originalUrl}`, 404 )
+import { crearError } from '../utils/errores.js'
 
-  next(error)
+export const notFoundMiddleware = ( req, res, next ) => {
+  next( crearError( `Ruta no encontrada: ${req.method} ${req.originalUrl}`, 404 ) )
 }
