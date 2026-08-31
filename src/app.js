@@ -1,15 +1,10 @@
 import express from 'express'
-import productosRoutes from './routes/productos.routes.js'
-import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
-import { errorMiddleware } from './middlewares/errorMiddleware.js'
 
 const app = express()
 
 app.use( express.json() )
 
 const PORT = 3000
-
-app.use("/productos", productosRoutes)
 
 app.get( '/', ( req, res ) => {
   res.send( 'Bienvenido a la API REST de gestión del poncho' )
