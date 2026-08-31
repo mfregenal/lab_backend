@@ -1,3 +1,5 @@
+import { crearError } from '../utils/errores.js';
+
 let productos=[
   { id: 1, nombre: "Poncho Catamarqueño de Vicuña", precio: 150000 },
   { id: 2, nombre: "Cuenco de Cerámica Rustica", precio: 12500 },
