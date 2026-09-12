@@ -3,3 +3,8 @@ node_modules/
 
 # Variables de entorno y secretos
 .env
+/src/generated/prisma
+
+.agents
+.claude
+.windsurf
