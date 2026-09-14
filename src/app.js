@@ -20,13 +20,13 @@ app.use('/pabellones', pabellonRoutes)
 app.use('/sectores', sectorRoutes)
 app.use('/stands', standRoutes)
 
+// Bienvenida
 app.get( '/', ( req, res ) => {
   res.send( 'Bienvenido a la API REST de gestión del poncho' )
 } )
 
-// Middlewares de error siempre al final
-app.use( notFoundMiddleware )
-app.use( errorMiddleware )
+app.use( notFoundMiddleware ) // Middleware para manejar rutas no encontradas
+app.use( errorMiddleware ) // Middleware para manejar errores
 
 app.listen( PORT, () => {
   console.log( `Servidor escuchando en el puerto http://localhost:${PORT}` )
