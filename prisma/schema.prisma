@@ -12,3 +12,14 @@ datasource db {
   provider = "postgresql"
 }
 
+model usuario {
+  id_usuario  Int       @id @default(autoincrement())
+  nombre      String
+  apellido    String
+  email       String    @unique
+  contrasena  String
+  rol         String?   @default("visitante")
+  std_usuario Boolean?  @default(true)
+  createAt    DateTime  @default(now())
+  updateAt    DateTime  @updatedAt
+}
