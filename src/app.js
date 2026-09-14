@@ -1,6 +1,8 @@
 import express from 'express'
 import artesanoRoutes from './routes/artesano.routes.js'
 import productosRoutes from './routes/productos.routes.js'
+import usuarioRoutes from './routes/usuario.routes.js'
+import rubroRoutes from './routes/rubro.routes.js'
 import pabellonRoutes from './routes/pabellon.routes.js'
 import sectorRoutes from './routes/sector.routes.js'
 import standRoutes from './routes/stand.routes.js'
@@ -16,6 +18,8 @@ const PORT = 3000
 // Rutas de ambos módulos
 app.use('/artesanos', artesanoRoutes)
 app.use('/productos', productosRoutes)
+app.use( '/usuario', usuarioRoutes )
+app.use( '/rubro', rubroRoutes )
 app.use('/pabellones', pabellonRoutes)
 app.use('/sectores', sectorRoutes)
 app.use('/stands', standRoutes)

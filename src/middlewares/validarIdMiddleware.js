@@ -1,12 +1,13 @@
-import { crearError } from '../utils/errores.js';
+import { crearError } from '../utils/errores.js'
 
-export const validarId = (req, res, next) => {
-    const id = Number(req.params.id);
+export const validarId = ( req, res, next ) => {
+  const id = Number( req.params.id )
 
-    if (!Number.isInteger(id) || id <= 0) {
-        return next(crearError('ID Invalido', 400));
-    }
+  if( !Number.isInteger( id ) || id <= 0 ) {
+    return next( crearError( 'ID invalido', 400 ) )
+  }
 
-    req.id = id;
-    next();
-};
+  req.id = id
+
+  next()
+}
