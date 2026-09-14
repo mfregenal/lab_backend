@@ -15,8 +15,8 @@ const PORT = 3000
 // Rutas de ambos módulos
 app.use('/artesanos', artesanoRoutes)
 app.use('/productos', productosRoutes)
-app.use( '/usuario', usuarioRoutes )
-app.use( '/rubro', rubroRoutes )
+app.use( '/usuarios', usuarioRoutes )
+app.use( '/rubros', rubroRoutes )
 
 // Bienvenida
 app.get( '/', ( req, res ) => {

@@ -24,7 +24,7 @@ model usuario {
   updateAt    DateTime  @updatedAt
 }
 
-model rubro {
+model Rubro {
   id_rubro    Int       @id @default(autoincrement())
   nom_rubro   String
   desc_rubro  String?
