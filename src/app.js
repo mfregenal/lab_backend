@@ -4,6 +4,9 @@ import productosRoutes from './routes/producto.routes.js'
 import usuarioRoutes from './routes/usuario.routes.js'
 import rubroRoutes from './routes/rubro.routes.js'
 import postulacionRoutes from './routes/postulacion.routes.js'  
+import pabellonRoutes from './routes/pabellon.routes.js'
+import sectorRoutes from './routes/sector.routes.js'
+import standRoutes from './routes/stand.routes.js'
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { errorMiddleware } from './middlewares/errorMiddleware.js'
 
@@ -19,6 +22,9 @@ app.use('/productos', productosRoutes)
 app.use( '/usuario', usuarioRoutes )
 app.use( '/rubro', rubroRoutes )
 app.use( '/postulacion', postulacionRoutes )
+app.use('/pabellones', pabellonRoutes)
+app.use('/sectores', sectorRoutes)
+app.use('/stands', standRoutes)
 
 // Bienvenida
 app.get( '/', ( req, res ) => {

@@ -90,3 +90,32 @@ model Producto {
   artesanoID Int 
   artesano Artesano @relation(fields: [artesanoID], references: [id_artesano])
 }
+model Pabellon {
+  id_pabellon   Int      @id @default(autoincrement())
+  nom_pabellon  String
+  desc_pabellon String?
+  sectores      Sector[]
+
+  @@map("pabellones")
+}
+
+model Sector {
+  id_sector   Int      @id @default(autoincrement())
+  nom_sector  String
+  id_pabellon Int
+  pabellon    Pabellon @relation(fields: [id_pabellon], references: [id_pabellon])
+  stands      Stand[]
+
+  @@map("sectores")
+}
+
+model Stand {
+  id_stand   Int    @id @default(autoincrement())
+  codigo     String @unique
+  coordenada String
+  std_stand  String @default("En preparación")
+  id_sector  Int
+  sector     Sector @relation(fields: [id_sector], references: [id_sector])
+
+  @@map("stands")
+}
