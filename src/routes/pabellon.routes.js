@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { obtenerPabellones,obtenerPabellonPorId,eliminarPabellon,crearPabellon,actualizarPabellon } from "../controllers/pabellon.controller";
-import { validarId } from "../middlewares/validarId";
+import { validarId } from "../middlewares/validarIdMiddleware";
 
 const router = Router ();
 

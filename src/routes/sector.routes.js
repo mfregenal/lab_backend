@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validarId } from "../middlewares/validarId";
+import { validarId } from "../middlewares/validarIdMiddleware";
 import { obtenerSectores,
     obtenerSectorPorId,
     crearSector,
