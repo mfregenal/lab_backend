@@ -13,13 +13,15 @@ datasource db {
 }
 
 model usuario {
-  id_usuario  Int     @id @default(autoincrement())
+  id_usuario  Int       @id @default(autoincrement())
   nombre      String
   apellido    String
-  email       String  @unique
+  email       String    @unique
   contrasena  String
-  rol         String?  @default("visitante")
-  std_usuario Boolean? @default(true)
+  rol         String?   @default("visitante")
+  std_usuario Boolean?  @default(true)
+  createAt    DateTime  @default(now())
+  updateAt    DateTime  @updatedAt
 }
 
 model rubro {
