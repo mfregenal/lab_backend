@@ -9,3 +9,5 @@ router.get('/:id',validarId,obtenerPabellonPorId);
 router.post('/',crearPabellon);
 router.put('/:id', validarId, actualizarPabellon);
 router.delete('/:id',validarId,eliminarPabellon);
+
+export default router;
