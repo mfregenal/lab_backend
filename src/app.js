@@ -1,8 +1,9 @@
 import express from 'express'
 import artesanoRoutes from './routes/artesano.routes.js'
-import productosRoutes from './routes/productos.routes.js'
+import productosRoutes from './routes/producto.routes.js'
 import usuarioRoutes from './routes/usuario.routes.js'
 import rubroRoutes from './routes/rubro.routes.js'
+import postulacionRoutes from './routes/postulacion.routes.js'  
 import pabellonRoutes from './routes/pabellon.routes.js'
 import sectorRoutes from './routes/sector.routes.js'
 import standRoutes from './routes/stand.routes.js'
@@ -20,6 +21,7 @@ app.use('/artesanos', artesanoRoutes)
 app.use('/productos', productosRoutes)
 app.use( '/usuario', usuarioRoutes )
 app.use( '/rubro', rubroRoutes )
+app.use( '/postulacion', postulacionRoutes )
 app.use('/pabellones', pabellonRoutes)
 app.use('/sectores', sectorRoutes)
 app.use('/stands', standRoutes)

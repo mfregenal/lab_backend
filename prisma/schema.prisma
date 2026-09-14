@@ -12,7 +12,7 @@ datasource db {
   provider = "postgresql"
 }
 
-model usuario {
+model Usuario {
   id_usuario  Int       @id @default(autoincrement())
   nombre      String
   apellido    String
@@ -22,14 +22,73 @@ model usuario {
   std_usuario Boolean?  @default(true)
   createAt    DateTime  @default(now())
   updateAt    DateTime  @updatedAt
+
+  postulacionesVisitante Postulacion[] 
+  postulacionesAdmin     Postulacion[] @relation("AdminEvalua")
+  artesano               Artesano?
 }
 
-model rubro {
+model Rubro {
   id_rubro    Int       @id @default(autoincrement())
   nom_rubro   String
   desc_rubro  String?
   createAt    DateTime   @default(now())
   updateAt    DateTime   @updatedAt
+
+  postulaciones Postulacion[]
+  artesanos     Artesano[]
+}
+
+model Postulacion {
+  id_postulacion  Int @id @default(autoincrement())
+  dni String @unique
+  celular String
+  pais  String? @default("Argentina")
+  provincia String? @default("Catamarca")
+  localidad String
+  nom_emprend String
+  desc_emprend String 
+  trayectoria String?
+  std_postulacion String? @default("Pendiente")
+  observacion String?
+ 
+  visitanteId Int? 
+  visitante Usuario? @relation( fields: [visitanteId], references: [id_usuario])
+
+  adminId Int?
+  admin Usuario? @relation("AdminEvalua", fields: [adminId], references: [id_usuario])
+
+  rubroId Int?
+  rubro Rubro? @relation(fields: [rubroId], references: [id_rubro])
+
+  artesano Artesano?
+}
+
+model Artesano {
+  id_artesano Int @id @default(autoincrement())
+
+  usuarioID Int @unique
+  usuario Usuario @relation(fields: [usuarioID], references: [id_usuario])
+
+  postulacionID Int @unique
+  postulacion Postulacion @relation(fields: [postulacionID], references: [id_postulacion])
+
+  rubroID Int @unique
+  rubro Rubro @relation(fields: [rubroID], references: [id_rubro])
+
+  productos Producto[]
+  //stand Stand?
+}
+
+model Producto {
+  id_producto Int @id @default(autoincrement())
+  nom_producto String
+  desc_producto String?
+  precio Decimal
+  std_producto String @default("Stock")
+
+  artesanoID Int 
+  artesano Artesano @relation(fields: [artesanoID], references: [id_artesano])
 }
 model Pabellon {
   id_pabellon   Int      @id @default(autoincrement())
