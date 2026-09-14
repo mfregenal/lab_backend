@@ -12,3 +12,54 @@ datasource db {
   provider = "postgresql"
 }
 
+model Postulacion {
+  id_postulacion  Int @id @default(autoincrement())
+  dni String @unique
+  celular String
+  pais  String @default("Argentina")
+  provincia String @default("Catamarca")
+  localidad String
+  nom_emprend String
+  desc_emprend String 
+  trayectoria String?
+  std_postulacion String @default("Pendiente")
+  observacion String?
+ 
+  visitanteID Int @unique
+  visitante Usuario @relation("VisitantePostula", fields: [visitanteID], references: [id_visitante])
+
+  adminId Int?
+  admin Usuario? @relation("AdminEvalua", fields: [adminId], references: [id_usuario])
+
+  rubroId Int
+  rubro Rubro @relation(fields: [rubroId], references: [id_rubro])
+
+  artesano Artesano?
+}
+
+model Artesano {
+  id_artesano Int @id @default(autoincrement())
+
+  usuarioID Int @unique
+  usuario Usuario @relation(fields: [usuarioID], references: [id_usuario])
+
+  postulacionID Int @unique
+  postulacion Postulacion @relation(fields: [postulacionID], references: [id_postulacion])
+
+  rubroID Int @unique
+  rubro Rubro @relation(fields: [rubroID], references: [id_rubro])
+
+  productos Producto[]
+  stand Stand?
+}
+
+model Producto {
+  id_producto Int @id @default(autoincrement())
+  nom_producto String
+  desc_producto String?
+  precio Decimal
+  std_producto String @default("Stock")
+
+  artesanoID Int 
+  artesano Artesano @relation(fields: [artesanoID], references: [id_artesano])
+}
