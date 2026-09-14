@@ -12,6 +12,26 @@ datasource db {
   provider = "postgresql"
 }
 
+model usuario {
+  id_usuario  Int       @id @default(autoincrement())
+  nombre      String
+  apellido    String
+  email       String    @unique
+  contrasena  String
+  rol         String?   @default("visitante")
+  std_usuario Boolean?  @default(true)
+  createAt    DateTime  @default(now())
+  updateAt    DateTime  @updatedAt
+}
+
+model rubro {
+  id_rubro    Int       @id @default(autoincrement())
+  nom_rubro   String
+  desc_rubro  String?
+  createAt    DateTime   @default(now())
+  updateAt    DateTime   @updatedAt
+}
+
 model Postulacion {
   id_postulacion  Int @id @default(autoincrement())
   dni String @unique
