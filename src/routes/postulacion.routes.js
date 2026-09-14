@@ -1,5 +1,5 @@
 import express from 'express';
-import { obtenerPostulaciones, obtenerPostulacionId, crearPostulacion, evaluarPostulacion, eliminarPostulacion } from '../controllers/postulaciones.controller.js';
+import { obtenerPostulaciones, obtenerPostulacionId, crearPostulacion, evaluarPostulacion, eliminarPostulacion } from '../controllers/postulacion.controller.js';
 
 const router = express.Router();
 

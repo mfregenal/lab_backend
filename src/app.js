@@ -1,8 +1,9 @@
 import express from 'express'
 import artesanoRoutes from './routes/artesano.routes.js'
-import productosRoutes from './routes/productos.routes.js'
+import productosRoutes from './routes/producto.routes.js'
 import usuarioRoutes from './routes/usuario.routes.js'
 import rubroRoutes from './routes/rubro.routes.js'
+import postulacionRoutes from './routes/postulacion.routes.js'  
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { errorMiddleware } from './middlewares/errorMiddleware.js'
 
@@ -17,6 +18,7 @@ app.use('/artesanos', artesanoRoutes)
 app.use('/productos', productosRoutes)
 app.use( '/usuario', usuarioRoutes )
 app.use( '/rubro', rubroRoutes )
+app.use( '/postulacion', postulacionRoutes )
 
 // Bienvenida
 app.get( '/', ( req, res ) => {

@@ -1,4 +1,3 @@
-import {artesanos, siguienteId} from '../data/artesano.js';
 import { crearError } from '../utils/errores.js'
 import prisma from '../config/prisma.js';
 

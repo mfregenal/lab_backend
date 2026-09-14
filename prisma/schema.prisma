@@ -12,7 +12,7 @@ datasource db {
   provider = "postgresql"
 }
 
-model usuario {
+model Usuario {
   id_usuario  Int       @id @default(autoincrement())
   nombre      String
   apellido    String
@@ -22,37 +22,44 @@ model usuario {
   std_usuario Boolean?  @default(true)
   createAt    DateTime  @default(now())
   updateAt    DateTime  @updatedAt
+
+  postulacionesVisitante Postulacion[] 
+  postulacionesAdmin     Postulacion[] @relation("AdminEvalua")
+  artesano               Artesano?
 }
 
-model rubro {
+model Rubro {
   id_rubro    Int       @id @default(autoincrement())
   nom_rubro   String
   desc_rubro  String?
   createAt    DateTime   @default(now())
   updateAt    DateTime   @updatedAt
+
+  postulaciones Postulacion[]
+  artesanos     Artesano[]
 }
 
 model Postulacion {
   id_postulacion  Int @id @default(autoincrement())
   dni String @unique
   celular String
-  pais  String @default("Argentina")
-  provincia String @default("Catamarca")
+  pais  String? @default("Argentina")
+  provincia String? @default("Catamarca")
   localidad String
   nom_emprend String
   desc_emprend String 
   trayectoria String?
-  std_postulacion String @default("Pendiente")
+  std_postulacion String? @default("Pendiente")
   observacion String?
  
-  visitanteID Int @unique
-  visitante Usuario @relation("VisitantePostula", fields: [visitanteID], references: [id_visitante])
+  visitanteId Int? 
+  visitante Usuario? @relation( fields: [visitanteId], references: [id_usuario])
 
   adminId Int?
   admin Usuario? @relation("AdminEvalua", fields: [adminId], references: [id_usuario])
 
-  rubroId Int
-  rubro Rubro @relation(fields: [rubroId], references: [id_rubro])
+  rubroId Int?
+  rubro Rubro? @relation(fields: [rubroId], references: [id_rubro])
 
   artesano Artesano?
 }
@@ -70,7 +77,7 @@ model Artesano {
   rubro Rubro @relation(fields: [rubroID], references: [id_rubro])
 
   productos Producto[]
-  stand Stand?
+  //stand Stand?
 }
 
 model Producto {

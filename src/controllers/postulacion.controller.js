@@ -52,7 +52,7 @@ export const crearPostulacion = async (req, res, next) => {
             return next(crearError('Faltan datos obligatorios para la postulación', 400));
         }
 
-        const nuevaPostulacion = await prisma.postulacion.create({
+        const nuevaPostulacion = await prisma.Postulacion.create({
             data: {
                 dni, celular, pais, provincia, localidad, nom_emprend, desc_emprend, trayectoria,
                 visitanteId: Number(visitanteId),
