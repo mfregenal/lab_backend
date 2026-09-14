@@ -91,7 +91,7 @@ export const actualizarStand = async (req, res, next) => {
         return res.json(standActualizado);
     } catch (error) {
         if (error.code === 'P2002') {
-        return next(crearError(`Ya existe un stand con el código '${req.body.codigo}'`, 409));
+        return next(crearError(`Ya existe un stand con ese código`, 409));
     }
         next(error);
     }
