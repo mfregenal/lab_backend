@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { validarId } from "../middlewares/validarIdMiddleware";
+import { validarId } from "../middlewares/validarIdMiddleware.js";
 import { obtenerSectores,
     obtenerSectorPorId,
     crearSector,
     actualizarSector,
     eliminarSector,
- } from "../controllers/sector.controller";
+ } from "../controllers/sector.controller.js";
 
  const router = Router();
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { obtenerStands, obtenerStandPorId, crearStand, actualizarStand, eliminarStand } from "../controllers/stand.controller";
-import { validarId } from "../middlewares/validarIdMiddleware";
+import { obtenerStands, obtenerStandPorId, crearStand, actualizarStand, eliminarStand } from "../controllers/stand.controller.js";
+import { validarId } from "../middlewares/validarIdMiddleware.js";
 
 const router = Router ();
 
