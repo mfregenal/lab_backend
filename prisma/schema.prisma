@@ -77,7 +77,7 @@ model Artesano {
   rubro Rubro @relation(fields: [rubroID], references: [id_rubro])
 
   productos Producto[]
-  //stand Stand?
+  stand Stand?
 }
 
 model Producto {
@@ -115,7 +115,9 @@ model Stand {
   coordenada String
   std_stand  String @default("En preparación")
   id_sector  Int
+  id_artesano  Int?      @unique
   sector     Sector @relation(fields: [id_sector], references: [id_sector])
+  artesano     Artesano? @relation(fields: [id_artesano], references: [id_artesano])
 
   @@map("stands")
 }
