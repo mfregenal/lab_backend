@@ -7,7 +7,7 @@ export const obtenerProductos = async (req, res, next) => {
         const { nombre } = req.query;
 
         const condiciones = {
-            std_producto: true 
+            std_producto: "Stock" 
         };
 
         if (nombre) {
@@ -39,7 +39,7 @@ export const obtenerProductos = async (req, res, next) => {
 
 export const obtenerProductoId = async (req, res, next) => {
     try {
-        const id = parseInt(req.params.id);
+        const id = req.id;
         const producto = await prisma.producto.findUnique({
             where: { id_producto: id },
             include: {
@@ -63,10 +63,11 @@ export const obtenerProductoId = async (req, res, next) => {
 
 export const crearProducto = async (req, res, next) => {
     try {
-        const { nom_producto, desc_producto, precio, artesanoId } = req.body;
+    
+        const { nom_producto, desc_producto, precio, artesanoID } = req.body;
 
-        if (!nom_producto || precio === undefined || !artesanoId) {
-            return next(crearError('Faltan datos obligatorios (nom_producto, precio, artesanoId)', 400));
+        if (!nom_producto || precio === undefined || !artesanoID) {
+            return next(crearError('Faltan datos obligatorios (nom_producto, precio, artesanoID)', 400));
         }
 
         const nuevoProducto = await prisma.producto.create({
@@ -74,7 +75,7 @@ export const crearProducto = async (req, res, next) => {
                 nom_producto,
                 desc_producto,
                 precio,
-                artesanoId: Number(artesanoId)
+                artesanoID: Number(artesanoID) 
             }
         });
 
@@ -87,7 +88,7 @@ export const crearProducto = async (req, res, next) => {
 
 export const actualizarProducto = async (req, res, next) => {
     try {
-        const id = parseInt(req.params.id);
+        const id = req.id;
         const { nom_producto, desc_producto, precio, std_producto } = req.body;
 
         const productoActualizado = await prisma.producto.update({

@@ -24,7 +24,7 @@ export const obtenerPostulaciones = async (req, res, next) => {
 
 export const obtenerPostulacionId = async (req, res, next) => {
     try {
-        const id = parseInt(req.params.id);
+        const id = req.id;
         const postulacion = await prisma.postulacion.findUnique({
             where: { id_postulacion: id },
             include: {
@@ -64,6 +64,39 @@ export const crearPostulacion = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         next(crearError('Error al crear la postulación', 500));
+    }
+};
+
+export const actualizarPostulacion = async (req, res, next) => {
+    try {
+        const id = req.id; 
+        
+        const { dni, celular, pais, provincia, localidad, nom_emprend, desc_emprend, trayectoria } = req.body;
+
+        const postulacionActualizada = await prisma.postulacion.update({
+            where: { id_postulacion: id },
+            data: {
+                dni, 
+                celular, 
+                pais, 
+                provincia, 
+                localidad, 
+                nom_emprend, 
+                desc_emprend, 
+                trayectoria
+            }
+        });
+
+        res.json(postulacionActualizada);
+    } catch (error) {
+        console.error(error);
+        if (error.code === 'P2025') {
+            return next(crearError(`No existe una postulación con id ${req.id}`, 404));
+        }
+        if (error.code === 'P2002') {
+            return next(crearError('Ya existe otra postulación registrada con ese DNI', 400));
+        }
+        next(crearError('Error al actualizar la postulación', 500));
     }
 };
 

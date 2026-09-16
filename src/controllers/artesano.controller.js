@@ -25,7 +25,8 @@ export const obtenerArtesanos = async (req, res, next) => {
 
 export const obtenerArtesanoId = async (req, res, next) => {
     try {
-        const id = parseInt(req.params.id);
+        const id = req.id; 
+
         const artesano = await prisma.artesano.findUnique({
             where: { id_artesano: id },
             include: {
@@ -48,17 +49,18 @@ export const obtenerArtesanoId = async (req, res, next) => {
 
 export const crearArtesano = async (req, res, next) => {
     try {
-        const { usuarioId, postulacionId, rubroId } = req.body;
+        // Asegurate de mandar estos datos en Postman exactamente con esta capitalización (terminados en ID)
+        const { usuarioID, postulacionID, rubroID } = req.body;
 
-        if (!usuarioId || !postulacionId || !rubroId) {
-            return next(crearError('Faltan datos obligatorios (usuarioId, postulacionId, rubroId)', 400));
+        if (!usuarioID || !postulacionID || !rubroID) {
+            return next(crearError('Faltan datos obligatorios (usuarioID, postulacionID, rubroID)', 400));
         }
 
         const nuevoArtesano = await prisma.artesano.create({
             data: {
-                usuarioId: Number(usuarioId),
-                postulacionId: Number(postulacionId),
-                rubroId: Number(rubroId)
+                usuarioID: Number(usuarioID),
+                postulacionID: Number(postulacionID),
+                rubroID: Number(rubroID)
             }
         });
 
@@ -71,14 +73,14 @@ export const crearArtesano = async (req, res, next) => {
 
 export const actualizarArtesano = async (req, res, next) => {
     try {
-        const id = parseInt(req.params.id);
-
-        const { rubroId, nom_emprend, trayectoria, localidad } = req.body;
+        const id = req.id;
+        const { rubroID, nom_emprend, trayectoria, localidad } = req.body;
 
         const artesanoActualizado = await prisma.artesano.update({
             where: { id_artesano: id },
             data: {
-                rubroId: rubroId ? Number(rubroId) : undefined,
+                // Actualizado a rubroID mayúscula
+                rubroID: rubroID ? Number(rubroID) : undefined, 
                 
                 postulacion: {
                     update: {
@@ -98,7 +100,7 @@ export const actualizarArtesano = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         if (error.code === 'P2025') {
-            return next(crearError(`No existe un artesano con id ${req.params.id}`, 404));
+            return next(crearError(`No existe un artesano con id ${req.id}`, 404));
         }
         next(crearError('Error al actualizar el perfil del artesano', 500));
     }
@@ -106,7 +108,7 @@ export const actualizarArtesano = async (req, res, next) => {
 
 export const eliminarArtesano = async (req, res, next) => {
     try {
-        const id = parseInt(req.params.id);
+        const id = req.id; // Actualizado al ID limpio del middleware
 
         await prisma.artesano.delete({
             where: { id_artesano: id }
@@ -116,7 +118,7 @@ export const eliminarArtesano = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         if (error.code === 'P2025') {
-            return next(crearError(`No existe un artesano con id ${req.params.id}`, 404));
+            return next(crearError(`No existe un artesano con id ${req.id}`, 404));
         }
         next(crearError('Error al eliminar el artesano', 500));
     }
