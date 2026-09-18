@@ -12,13 +12,19 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Rol {
+  visitante
+  artesano
+  administrador
+}
+
 model Usuario {
   id_usuario  Int       @id @default(autoincrement())
   nombre      String
   apellido    String
   email       String    @unique
   contrasena  String
-  rol         String?   @default("visitante")
+  rol         Rol       @default(visitante)
   std_usuario Boolean?  @default(true)
   createAt    DateTime  @default(now())
   updateAt    DateTime  @updatedAt
