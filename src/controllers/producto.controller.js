@@ -1,32 +1,13 @@
 import { crearError } from '../utils/errores.js';
-import prisma from '../config/prisma.js';
+import { obtenerProductosService, crearProductoService } from '../services/producto.service.js';
 
 
 export const obtenerProductos = async (req, res, next) => {
     try {
-        const { nombre } = req.query;
+       
+        const filtrosDTO = req.query;
 
-        const condiciones = {
-            std_producto: "Stock" 
-        };
-
-        if (nombre) {
-            condiciones.nom_producto = {
-                contains: nombre,        
-                mode: 'insensitive'       
-            };
-        }
-
-        const productos = await prisma.producto.findMany({
-            where: condiciones,
-            include: {
-                artesano: {
-                    include: {
-                        postulacion: { select: { nom_emprend: true } }
-                    }
-                }
-            }
-        });
+        const productos = await obtenerProductosService(filtrosDTO);
         
         res.json(productos);
     } catch (error) {
@@ -34,7 +15,6 @@ export const obtenerProductos = async (req, res, next) => {
         next(crearError('Error al obtener los productos', 500));
     }
 };
-
 
 
 export const obtenerProductoId = async (req, res, next) => {
@@ -60,29 +40,22 @@ export const obtenerProductoId = async (req, res, next) => {
     }
 };
 
-
 export const crearProducto = async (req, res, next) => {
     try {
-    
-        const { nom_producto, desc_producto, precio, artesanoID } = req.body;
+   
+        const productoDTO = req.body;
 
-        if (!nom_producto || precio === undefined || !artesanoID) {
-            return next(crearError('Faltan datos obligatorios (nom_producto, precio, artesanoID)', 400));
-        }
-
-        const nuevoProducto = await prisma.producto.create({
-            data: {
-                nom_producto,
-                desc_producto,
-                precio,
-                artesanoID: Number(artesanoID) 
-            }
-        });
+        const nuevoProducto = await crearProductoService(productoDTO);
 
         res.status(201).json(nuevoProducto);
     } catch (error) {
         console.error(error);
-        next(crearError('Error al crear el producto', 500));
+        
+        if (error.statusCode) {
+            return next(error);
+        }
+        
+        next(crearError('Error interno al crear el producto', 500));
     }
 };
 
