@@ -12,16 +12,22 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Rol {
+  visitante
+  artesano
+  administrador
+}
+
 model Usuario {
   id_usuario  Int       @id @default(autoincrement())
   nombre      String
   apellido    String
   email       String    @unique
   contrasena  String
-  rol         String?   @default("visitante")
+  rol         Rol       @default(visitante)
   std_usuario Boolean?  @default(true)
-  createAt    DateTime  @default(now())
-  updateAt    DateTime  @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   postulacionesVisitante Postulacion[] 
   postulacionesAdmin     Postulacion[] @relation("AdminEvalua")
@@ -29,69 +35,69 @@ model Usuario {
 }
 
 model Rubro {
-  id_rubro    Int       @id @default(autoincrement())
+  id_rubro    Int        @id @default(autoincrement())
   nom_rubro   String
   desc_rubro  String?
-  createAt    DateTime   @default(now())
-  updateAt    DateTime   @updatedAt
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
   postulaciones Postulacion[]
   artesanos     Artesano[]
 }
 
 model Postulacion {
-  id_postulacion  Int @id @default(autoincrement())
-  dni String @unique
-  celular String
-  pais  String? @default("Argentina")
-  provincia String? @default("Catamarca")
-  localidad String
-  nom_emprend String
-  desc_emprend String 
-  trayectoria String?
-  std_postulacion String? @default("Pendiente")
-  observacion String?
- 
-  visitanteId Int? 
-  visitante Usuario? @relation( fields: [visitanteId], references: [id_usuario])
+  id_postulacion  Int       @id @default(autoincrement())
+  dni             String    @unique
+  celular         String
+  pais            String?   @default("Argentina")
+  provincia       String?   @default("Catamarca")
+  localidad       String
+  nom_emprend     String
+  desc_emprend    String 
+  trayectoria     String?
+  std_postulacion String?   @default("Pendiente")
+  observacion     String?
 
-  adminId Int?
-  admin Usuario? @relation("AdminEvalua", fields: [adminId], references: [id_usuario])
+  visitanteId     Int? 
+  visitante       Usuario?  @relation( fields: [visitanteId], references: [id_usuario])
 
-  rubroId Int?
-  rubro Rubro? @relation(fields: [rubroId], references: [id_rubro])
+  adminId         Int?
+  admin           Usuario?  @relation("AdminEvalua", fields: [adminId], references: [id_usuario])
 
-  artesano Artesano?
+  rubroId         Int?
+  rubro           Rubro?    @relation(fields: [rubroId], references: [id_rubro])
+
+  artesano        Artesano?
 }
 
 model Artesano {
-  id_artesano Int @id @default(autoincrement())
+  id_artesano     Int         @id @default(autoincrement())
 
-  usuarioID Int @unique
-  usuario Usuario @relation(fields: [usuarioID], references: [id_usuario])
+  usuarioID       Int         @unique
+  usuario         Usuario     @relation(fields: [usuarioID], references: [id_usuario])
 
-  postulacionID Int @unique
-  postulacion Postulacion @relation(fields: [postulacionID], references: [id_postulacion])
+  postulacionID   Int         @unique
+  postulacion     Postulacion @relation(fields: [postulacionID], references: [id_postulacion])
 
-  rubroID Int @unique
-  rubro Rubro @relation(fields: [rubroID], references: [id_rubro])
+  rubroID         Int         @unique
+  rubro           Rubro       @relation(fields: [rubroID], references: [id_rubro])
 
-  productos Producto[]
-  stand Stand?
+  productos       Producto[]
+  stand           Stand?
 }
 
 model Producto {
-  id_producto Int @id @default(autoincrement())
-  nom_producto String
+  id_producto   Int       @id @default(autoincrement())
+  nom_producto  String
   desc_producto String?
-  precio Decimal
-  std_producto String @default("Stock")
+  precio        Decimal
+  std_producto  String    @default("Stock")
 
-  artesanoID Int 
-  artesano Artesano @relation(fields: [artesanoID], references: [id_artesano])
+  artesanoID    Int
+  artesano      Artesano  @relation(fields: [artesanoID], references: [id_artesano])
 }
 model Pabellon {
-  id_pabellon   Int      @id @default(autoincrement())
+  id_pabellon   Int       @id @default(autoincrement())
   nom_pabellon  String
   desc_pabellon String?
   sectores      Sector[]
@@ -100,24 +106,24 @@ model Pabellon {
 }
 
 model Sector {
-  id_sector   Int      @id @default(autoincrement())
+  id_sector   Int       @id @default(autoincrement())
   nom_sector  String
   id_pabellon Int
-  pabellon    Pabellon @relation(fields: [id_pabellon], references: [id_pabellon])
+  pabellon    Pabellon  @relation(fields: [id_pabellon], references: [id_pabellon])
   stands      Stand[]
 
   @@map("sectores")
 }
 
 model Stand {
-  id_stand   Int    @id @default(autoincrement())
-  codigo     String @unique
-  coordenada String
-  std_stand  String @default("En preparación")
-  id_sector  Int
-  id_artesano  Int?      @unique
-  sector     Sector @relation(fields: [id_sector], references: [id_sector])
-  artesano     Artesano? @relation(fields: [id_artesano], references: [id_artesano])
+  id_stand    Int       @id @default(autoincrement())
+  codigo      String    @unique
+  coordenada  String
+  std_stand   String    @default("En preparación")
+  id_sector   Int
+  id_artesano Int?      @unique
+  sector      Sector    @relation(fields: [id_sector], references: [id_sector])
+  artesano    Artesano? @relation(fields: [id_artesano], references: [id_artesano])
 
   @@map("stands")
 }

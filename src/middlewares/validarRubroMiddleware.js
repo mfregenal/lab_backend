@@ -1,13 +1,32 @@
-import { crearError } from "../utils/errores.js"
+import { crearError, detallarErroresZod } from "../utils/errores.js"
+import { crearRubroSchema, actualizarRubroSchema, ConsultarRubrosSchema } from "../validators/rubro.schema.js"
 
-export const validarRubro = ( req, res, next ) => {
-  const { nom_rubro } = req.body
-
-  if( typeof nom_rubro !== 'string' || nom_rubro.trim() === '' || !isNaN( nom_rubro ) ) {
-    return next( crearError( 'Nombre no valido', 400 ) )
+export const validarCreacionRubro = (req, res, next) => {
+  const resultado = crearRubroSchema.safeParse(req.body)
+  if (!resultado.success) {
+    const detalles = detallarErroresZod(resultado.error)
+    return next(crearError('Datos de rubro inválidos', 400, detalles))
   }
+  req.body = resultado.data
+  next()
+}
 
-  req.body.nom_rubro = nom_rubro.trim().replace(/\s+/g, ' ')
+export const validarConsultaRubro = (req, res, next) => {
+  const resultado = ConsultarRubrosSchema.safeParse(req.query)
+  if (!resultado.success) {
+    const detalles = detallarErroresZod(resultado.error)
+    return next(crearError('Datos de consulta inválidos', 400, detalles))
+  }
+  req.queryValido = resultado.data
+  next()
+}
 
+export const validarActualizacionRubro = (req, res, next) => {
+  const resultado = actualizarRubroSchema.safeParse(req.body)
+  if (!resultado.success) {
+    const detalles = detallarErroresZod(resultado.error)
+    return next(crearError('Datos de actualización inválidos', 400, detalles))
+  }
+  req.body = resultado.data
   next()
 }
