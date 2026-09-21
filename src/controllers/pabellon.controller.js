@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
-import {crearPabellon as crarPabellonService} from '../services/pabellon.service.js';
+import {crearPabellon as crearPabellonService} from '../services/pabellon.service.js';
 
 export const obtenerPabellones = async (req, res, next) => {
     try {
