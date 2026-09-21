@@ -1,8 +1,8 @@
-import * as standService from "../services/stands.service.js";
+import * as standService from "../services/stand.service.js";
 
 export const obtenerStands = async (req, res, next) => {
   try {
-    const resultado = await standService.consultarStands(req.consultaStands);
+    const resultado = await standService.consultarStand(req.consultaStands);
     return res.json(resultado);
   } catch (error) {
     next(error);
