@@ -1,7 +1,15 @@
-export const crearError = ( mensaje, status ) => {
-  const error = new Error( mensaje )
+export const crearError = (mensaje, status, detalles) => {
+  const error = new Error(mensaje)
   error.status = status
-  error.statusCode = status
+  if (detalles) {
+    error.detalles = detalles
+  }
 
   return error
 }
+
+export const detallarErroresZod = (errorZod) =>
+  errorZod.issues.map((issues) => ({
+    campo: issues.patch.join('.') || null,
+    mensaje: issues.message
+  }))
