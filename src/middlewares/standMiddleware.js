@@ -28,7 +28,7 @@ export const validarConsultaStands = (req,res,next) => {
         });
     }
 
-    req.consultaEventos = resultado.data;
+    req.consultaStands = resultado.data;
 
     return next();
 };

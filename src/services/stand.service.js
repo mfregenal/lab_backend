@@ -40,11 +40,11 @@ export const crearStand = async (datosStand) => {
 };
 
 export const consultarStand = async (criteriosConsulta) => {
-    const { estado, id_sector, ordenPor, direccion, pagina, limite } = criteriosConsulta;
+    const { std_stand, id_sector, ordenPor, direccion, pagina, limite } = criteriosConsulta;
 
     const where = {};
-    if (estado) {
-        where.estado = { contains: estado, mode: "insensitive" };
+    if (std_stand) {
+        where.estado = { contains: std_stand, mode: "insensitive" };
     }
     if (id_sector) {
         where.id_sector = id_sector;
