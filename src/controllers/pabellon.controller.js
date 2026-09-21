@@ -1,5 +1,6 @@
 import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
+import {crearPabellon as crearPabellonService} from '../services/pabellon.service.js';
 
 export const obtenerPabellones = async (req, res, next) => {
     try {
@@ -32,20 +33,13 @@ export const obtenerPabellonPorId = async (req, res, next) => {
 
 export const crearPabellon = async (req, res, next) => {
     try {
-        const { nom_pabellon, desc_pabellon } = req.body;
+    const crearPabellonDto = req.body;
+    const nuevoPabellon = await crearPabellonService(crearPabellonDto);
 
-        if (!nom_pabellon || typeof nom_pabellon !== 'string') {
-            return next(crearError('El campo nom_pabellon es obligatorio y debe ser texto', 400));
-        }
-        const nuevoPabellon = await prisma.pabellon.create({
-            data: {
-                nom_pabellon, desc_pabellon: desc_pabellon || null
-            }
-        });
-        return res.status(201).json(nuevoPabellon);
-    } catch (error) {
-        next(error);
-    }
+    return res.status(201).json(nuevoPabellon);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const actualizarPabellon = async (req, res, next) => {
