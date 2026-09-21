@@ -79,7 +79,7 @@ model Artesano {
   postulacionID Int @unique
   postulacion Postulacion @relation(fields: [postulacionID], references: [id_postulacion])
 
-  rubroID Int @unique
+  rubroID Int 
   rubro Rubro @relation(fields: [rubroID], references: [id_rubro])
 
   productos Producto[]

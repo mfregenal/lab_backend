@@ -1,20 +1,14 @@
 import { crearError } from '../utils/errores.js';
-import prisma from '../config/prisma.js';
+import { crearPostulacionService, obtenerPostulacionesService } from '../services/postulacion.service.js';
 
-// GET /api/postulaciones
+
 export const obtenerPostulaciones = async (req, res, next) => {
     try {
-        const { estado } = req.query;
-        const condiciones = estado ? { std_postulacion: estado.toUpperCase() } : {};
+  
+        const filtrosDTO = req.query;
 
-        const postulaciones = await prisma.postulacion.findMany({
-            where: condiciones,
-            include: {
-                visitante: { select: { nombre: true, apellido: true, email: true } },
-                rubro: { select: { nom_rubro: true } },
-                admin: { select: { nombre: true, apellido: true } } 
-            }
-        });
+        const postulaciones = await obtenerPostulacionesService(filtrosDTO);
+        
         res.json(postulaciones);
     } catch (error) {
         console.error(error);
@@ -46,24 +40,19 @@ export const obtenerPostulacionId = async (req, res, next) => {
 
 export const crearPostulacion = async (req, res, next) => {
     try {
-        const { dni, celular, pais, provincia, localidad, nom_emprend, desc_emprend, trayectoria, visitanteId, rubroId } = req.body;
+        const postulacionDTO = req.body;
 
-        if (!dni || !celular || !nom_emprend || !visitanteId || !rubroId) {
-            return next(crearError('Faltan datos obligatorios para la postulación', 400));
-        }
-
-        const nuevaPostulacion = await prisma.Postulacion.create({
-            data: {
-                dni, celular, pais, provincia, localidad, nom_emprend, desc_emprend, trayectoria,
-                visitanteId: Number(visitanteId),
-                rubroId: Number(rubroId)
-            }
-        });
+        const nuevaPostulacion = await crearPostulacionService(postulacionDTO);
 
         res.status(201).json(nuevaPostulacion);
     } catch (error) {
         console.error(error);
-        next(crearError('Error al crear la postulación', 500));
+        
+        if (error.statusCode) {
+            return next(error);
+        }
+
+        next(crearError('Error interno al crear la postulación', 500));
     }
 };
 

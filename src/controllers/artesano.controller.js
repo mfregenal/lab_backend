@@ -1,21 +1,14 @@
 import { crearError } from '../utils/errores.js'
 import prisma from '../config/prisma.js';
+import { obtenerArtesanosService, crearArtesanoService } from '../services/artesano.service.js';
 
 export const obtenerArtesanos = async (req, res, next) => {
     try {
-        const artesanos = await prisma.artesano.findMany({
-            include: {
-                postulacion: {
-                    select: { nom_emprend: true, localidad: true, provincia: true }
-                },
-                rubro: {
-                    select: { nom_rubro: true }
-                },
-                usuario: {
-                    select: { nombre: true, apellido: true }
-                }
-            }
-        });
+   
+        const filtrosDTO = req.query;
+
+        const artesanos = await obtenerArtesanosService(filtrosDTO);
+        
         res.json(artesanos);
     } catch (error) {
         console.error(error);
@@ -49,25 +42,20 @@ export const obtenerArtesanoId = async (req, res, next) => {
 
 export const crearArtesano = async (req, res, next) => {
     try {
-        // Asegurate de mandar estos datos en Postman exactamente con esta capitalización (terminados en ID)
-        const { usuarioID, postulacionID, rubroID } = req.body;
 
-        if (!usuarioID || !postulacionID || !rubroID) {
-            return next(crearError('Faltan datos obligatorios (usuarioID, postulacionID, rubroID)', 400));
-        }
+        const artesanoDTO = req.body;
 
-        const nuevoArtesano = await prisma.artesano.create({
-            data: {
-                usuarioID: Number(usuarioID),
-                postulacionID: Number(postulacionID),
-                rubroID: Number(rubroID)
-            }
-        });
+        const nuevoArtesano = await crearArtesanoService(artesanoDTO);
 
         res.status(201).json(nuevoArtesano);
     } catch (error) {
         console.error(error);
-        next(crearError('Error al crear el artesano', 500));
+        
+        if (error.statusCode) {
+            return next(error);
+        }
+        
+        next(crearError('Error interno al crear el artesano', 500));
     }
 };
 
@@ -79,7 +67,6 @@ export const actualizarArtesano = async (req, res, next) => {
         const artesanoActualizado = await prisma.artesano.update({
             where: { id_artesano: id },
             data: {
-                // Actualizado a rubroID mayúscula
                 rubroID: rubroID ? Number(rubroID) : undefined, 
                 
                 postulacion: {
@@ -108,8 +95,8 @@ export const actualizarArtesano = async (req, res, next) => {
 
 export const eliminarArtesano = async (req, res, next) => {
     try {
-        const id = req.id; // Actualizado al ID limpio del middleware
-
+        const id = req.id; 
+        
         await prisma.artesano.delete({
             where: { id_artesano: id }
         });
