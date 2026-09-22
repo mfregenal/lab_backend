@@ -7,12 +7,16 @@ import postulacionRoutes from './routes/postulacion.routes.js'
 import pabellonRoutes from './routes/pabellon.routes.js'
 import sectorRoutes from './routes/sector.routes.js'
 import standRoutes from './routes/stand.routes.js'
+import consultaRoutes from './routes/consulta.routes.js'
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { errorMiddleware } from './middlewares/errorMiddleware.js'
+import { loggerConsultas } from './middlewares/loggerConsultasMiddleware.js'
 
 const app = express()
 
 app.use( express.json() )
+
+app.use( loggerConsultas )
 
 const PORT = 3000
 
@@ -21,6 +25,7 @@ app.use('/artesanos', artesanoRoutes)
 app.use('/productos', productosRoutes)
 app.use( '/usuarios', usuarioRoutes )
 app.use( '/rubros', rubroRoutes )
+app.use( '/consultas', consultaRoutes )
 app.use( '/postulacion', postulacionRoutes )
 app.use('/pabellones', pabellonRoutes)
 app.use('/sectores', sectorRoutes)
