@@ -127,3 +127,12 @@ model Stand {
 
   @@map("stands")
 }
+
+model Consulta {
+  id_consulta Int       @id @default(autoincrement())
+  metodo      String
+  endpoint    String
+  query       String?
+  params      String?
+  createAt   DateTime   @default(now())
+}
