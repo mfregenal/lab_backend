@@ -1,22 +1,21 @@
 import prisma from "../config/prisma.js";
+import { crearError } from "../utils/errores.js";
 
 export const crearPabellon = async (datosPabellon) => {
   const { nom_pabellon, desc_pabellon } = datosPabellon;
 
-  // Regla de negocio con consulta a la base de datos
   const existePabellon = await prisma.pabellon.findFirst({
     where: {
       nom_pabellon: {
         equals: nom_pabellon,
-        mode: "insensitive", // Ignora mayúsculas y minúsculas
+        mode: "insensitive", 
       },
     },
   });
 
   if (existePabellon) {
-    const error = new Error("Ya existe un pabellón registrado con ese nombre.");
-    error.status = 400;
-    throw error;
+    throw crearError(`Ya existe un pabellón registrado con el nombre: ${nom_pabellon}.`,409);
+    
   }
 
   return prisma.pabellon.create({
