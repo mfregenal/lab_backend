@@ -5,10 +5,18 @@ export const crearStandSchema = z.object({
         .string({ required_error: "El código del stand es obligatorio." })
         .trim()
         .min(1, "El código no puede estar vacío."),
-    coordenada: z
-        .string({ required_error: "La coordenada es obligatoria." })
-        .trim()
-        .min(1, "La coordenada no puede estar vacía."),
+    latitud: z.coerce
+        .number()
+        .min(-90)
+        .max(90)
+        .optional()
+        .nullable(),
+    longitud: z.coerce
+        .number()
+        .min(-180)
+        .max(180)
+        .optional()
+        .nullable(),    
     id_sector: z.coerce
         .number({ required_error: "El id_sector es obligatorio." })
         .int("Debe ser un entero.")

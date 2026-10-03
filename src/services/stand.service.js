@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
 
 export const crearStand = async (datosStand) => {
-    const { codigo, coordenada, id_sector, id_artesano } = datosStand;
+    const { codigo, latitud, longitud, id_sector, id_artesano } = datosStand;
 
     const sectorExiste = await prisma.sector.findUnique({
         where: { id_sector },
@@ -22,13 +22,14 @@ export const crearStand = async (datosStand) => {
     });
 
     if (codigoExiste) {
-        throw crearError(`Ya existe un stand registrado con el código: ${codigo}.`, 400);
+        throw crearError(`Ya existe un stand registrado con el código: ${codigo}.`, 409);
     }
 
     return prisma.stand.create({
         data: {
             codigo,
-            coordenada,
+            latitud: latitud ?? null,
+            longitud: longitud ?? null,
             id_sector,
             id_artesano: id_artesano ?? null,
         },

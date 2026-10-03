@@ -120,7 +120,8 @@ model Sector {
 model Stand {
   id_stand    Int       @id @default(autoincrement())
   codigo      String    @unique
-  coordenada  String
+  latitud     Float?
+  longitud    Float?
   std_stand   String    @default("En preparación")
   
   id_sector   Int
