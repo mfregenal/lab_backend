@@ -22,7 +22,7 @@ export const crearStandSchema = z.object({
 });
 
 export const consultarStandsSchemas = z.object({
-    estado: z.string().trim().min(1).optional(),
+    std_stand: z.string().trim().min(1).optional(),
     id_sector: z.coerce.number().int().positive().optional(), 
     ordenPor: z.enum(["codigo", "id_stand"]).default("id_stand"),
     direccion: z.enum(["asc", "desc"]).default("asc"),

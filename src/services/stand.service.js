@@ -44,7 +44,7 @@ export const consultarStand = async (criteriosConsulta) => {
 
     const where = {};
     if (std_stand) {
-        where.estado = { contains: std_stand, mode: "insensitive" };
+        where.std_stand = { contains: std_stand, mode: "insensitive" };
     }
     if (id_sector) {
         where.id_sector = id_sector;
