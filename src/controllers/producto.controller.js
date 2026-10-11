@@ -1,60 +1,43 @@
 import { crearError } from '../utils/errores.js';
-import { obtenerProductosService, crearProductoService } from '../services/producto.service.js';
-
+import { 
+    obtenerProductosService, 
+    crearProductoService,
+    obtenerProductoIdService,
+    actualizarProductoService,
+    eliminarProductoService
+} from '../services/producto.service.js';
 
 export const obtenerProductos = async (req, res, next) => {
     try {
-       
         const filtrosDTO = req.query;
-
-        const productos = await obtenerProductosService(filtrosDTO);
-        
-        res.json(productos);
+        const respuesta = await obtenerProductosService(filtrosDTO);
+        res.json(respuesta);
     } catch (error) {
         console.error(error);
         next(crearError('Error al obtener los productos', 500));
     }
 };
 
-
 export const obtenerProductoId = async (req, res, next) => {
     try {
         const id = req.id;
-        const producto = await prisma.producto.findUnique({
-            where: { id_producto: id },
-            include: {
-                artesano: {
-                    select: { id_artesano: true }
-                }
-            }
-        });
-
-        if (!producto) {
-            return next(crearError(`No existe un producto con id ${id}`, 404));
-        }
-
+        const producto = await obtenerProductoIdService(id);
         res.json(producto);
     } catch (error) {
         console.error(error);
+        if (error.statusCode) return next(error);
         next(crearError('Error al buscar el producto', 500));
     }
 };
 
 export const crearProducto = async (req, res, next) => {
     try {
-   
         const productoDTO = req.body;
-
         const nuevoProducto = await crearProductoService(productoDTO);
-
         res.status(201).json(nuevoProducto);
     } catch (error) {
         console.error(error);
-        
-        if (error.statusCode) {
-            return next(error);
-        }
-        
+        if (error.statusCode) return next(error);
         next(crearError('Error interno al crear el producto', 500));
     }
 };
@@ -62,42 +45,25 @@ export const crearProducto = async (req, res, next) => {
 export const actualizarProducto = async (req, res, next) => {
     try {
         const id = req.id;
-        const { nom_producto, desc_producto, precio, std_producto } = req.body;
+        const dataDTO = req.body;
 
-        const productoActualizado = await prisma.producto.update({
-            where: { id_producto: id },
-            data: {
-                nom_producto,
-                desc_producto,
-                precio,
-                std_producto
-            }
-        });
-
+        const productoActualizado = await actualizarProductoService(id, dataDTO);
         res.json(productoActualizado);
     } catch (error) {
         console.error(error);
-        if (error.code === 'P2025') {
-            return next(crearError(`No existe un producto con id ${req.params.id}`, 404));
-        }
+        if (error.statusCode) return next(error);
         next(crearError('Error al actualizar el producto', 500));
     }
 };
 
 export const eliminarProducto = async (req, res, next) => {
     try {
-        const id = parseInt(req.params.id);
-
-        await prisma.producto.delete({
-            where: { id_producto: id }
-        });
-
+        const id = req.id; // Asumiendo que usas tu middleware validarIdMiddleware
+        await eliminarProductoService(id);
         res.status(204).send();
     } catch (error) {
         console.error(error);
-        if (error.code === 'P2025') {
-            return next(crearError(`No existe un producto con id ${req.params.id}`, 404));
-        }
+        if (error.statusCode) return next(error);
         next(crearError('Error al eliminar el producto', 500));
     }
 };
