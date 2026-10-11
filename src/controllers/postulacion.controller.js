@@ -89,69 +89,14 @@ export const actualizarPostulacion = async (req, res, next) => {
     }
 };
 
-
-export const evaluarPostulacion = async (req, res, next) => {
-    try {
-        const id = parseInt(req.params.id);
-        const { std_postulacion, observacion, adminId } = req.body;
-
-        if (!std_postulacion || !adminId) {
-            return next(crearError('El estado de evaluación y el ID del administrador son obligatorios', 400));
-        }
-
-        const resultado = await prisma.$transaction(async (tx) => {
-            const postulacionActualizada = await tx.postulacion.update({
-                where: { id_postulacion: id },
-                data: {
-                    std_postulacion, 
-                    observacion,
-                    adminId: Number(adminId)
-                }
-            });
-
-            if (std_postulacion === 'APROBADA') {
-                const artesanoExistente = await tx.artesano.findUnique({
-                    where: { postulacionId: id }
-                });
-
-                if (!artesanoExistente) {
-                    await tx.artesano.create({
-                        data: {
-                            usuarioId: postulacionActualizada.visitanteId,
-                            postulacionId: postulacionActualizada.id_postulacion,
-                            rubroId: postulacionActualizada.rubroId
-                        }
-                    });
-                }
-            }
-
-            return postulacionActualizada;
-        });
-
-        res.json({ mensaje: 'Postulación evaluada correctamente', postulacion: resultado });
-    } catch (error) {
-        console.error(error);
-        if (error.code === 'P2025') {
-            return next(crearError(`No existe una postulación con id ${req.params.id}`, 404));
-        }
-        next(crearError('Error al evaluar la postulación', 500));
-    }
-};
-
 export const eliminarPostulacion = async (req, res, next) => {
     try {
-        const id = parseInt(req.params.id);
-
-        await prisma.postulacion.delete({
-            where: { id_postulacion: id }
-        });
-
+        const id = parseInt(req.params.id); // o req.id, dependiendo de tu middleware validarIdMiddleware
+        await eliminarPostulacionService(id);
         res.status(204).send();
     } catch (error) {
         console.error(error);
-        if (error.code === 'P2025') {
-            return next(crearError(`No existe una postulación con id ${req.params.id}`, 404));
-        }
+        if (error.statusCode) return next(error);
         next(crearError('Error al eliminar la postulación', 500));
     }
 };

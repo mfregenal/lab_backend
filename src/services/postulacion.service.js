@@ -43,7 +43,7 @@ export const obtenerPostulacionesService = async (filtrosDTO) => {
     const postulaciones = await prisma.postulacion.findMany({
         where: condiciones,
         include: {
-            visitante: { select: { nombre: true, apellido: true, email: true } },
+            usuario: { select: { nombre: true, apellido: true, email: true } },
             rubro: { select: { nom_rubro: true } },
             admin: { select: { nombre: true, apellido: true } } 
         }

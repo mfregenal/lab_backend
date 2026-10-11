@@ -1,5 +1,5 @@
 import express from 'express';
-import { obtenerPostulaciones, obtenerPostulacionId, crearPostulacion,actualizarPostulacion, evaluarPostulacion, eliminarPostulacion } from '../controllers/postulacion.controller.js';
+import { obtenerPostulaciones, obtenerPostulacionId, crearPostulacion,actualizarPostulacion, eliminarPostulacion } from '../controllers/postulacion.controller.js';
 import { validarId } from "../middlewares/validarIdMiddleware.js";
 import { validarCreacionPostulacion, validarConsultaPostulaciones} from "../middlewares/postulacion.middlewares.js";
 
@@ -9,7 +9,7 @@ router.get('/', validarConsultaPostulaciones, obtenerPostulaciones);
 router.get('/:id', validarId, obtenerPostulacionId);
 router.post('/', validarCreacionPostulacion, crearPostulacion);
 router.put('/:id', validarId, actualizarPostulacion);
-router.put('/:id/evaluar', validarId, evaluarPostulacion);
+router.put('/:id/evaluar', validarId);
 router.delete('/:id', validarId, eliminarPostulacion);
 
 export default router;
