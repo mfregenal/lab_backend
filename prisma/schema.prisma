@@ -13,59 +13,71 @@ datasource db {
 }
 
 enum Rol {
-  visitante
-  artesano
-  administrador
+  ARTESANO
+  ADMINISTRADOR
+}
+
+enum EstadoPostulacion {
+  PENDIENTE           // Recién registrado
+  EN_REVISION         // Siendo analizado por el admin
+  REVISION_REQUERIDA  // El admin solicita modificaciones
+  APROBADA            // Habilita al artesano a cargar productos/stands
+  RECHAZADA           // Postulación declinada
+}
+
+enum EstadoStand {
+  DISPONIBLE
+  OCUPADO
+  MANTENIMIENTO
 }
 
 model Usuario {
-  id_usuario  Int       @id @default(autoincrement())
-  nombre      String
-  apellido    String
-  email       String    @unique
-  contrasena  String
-  rol         Rol       @default(visitante)
-  std_usuario Boolean?  @default(true)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id_usuario      Int         @id @default(autoincrement())
+  nombre          String
+  apellido        String
+  email           String      @unique
+  contrasena      String
+  rol             Rol         @default(ARTESANO)
+  std_usuario     Boolean?    @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
-  postulacionesVisitante Postulacion[] 
-  postulacionesAdmin     Postulacion[] @relation("AdminEvalua")
-  artesano               Artesano?
+  artesano                Artesano?
+  postulaciones           Postulacion?  @relation("UsuarioPostula")
+  postulacionesEvaluadas  Postulacion[] @relation("AdminEvalua")
 }
 
 model Rubro {
-  id_rubro    Int        @id @default(autoincrement())
-  nom_rubro   String
-  desc_rubro  String?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id_rubro        Int         @id @default(autoincrement())
+  nom_rubro       String
+  desc_rubro      String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
-  postulaciones Postulacion[]
-  artesanos     Artesano[]
+  postulaciones   Postulacion[]
 }
 
 model Postulacion {
-  id_postulacion  Int       @id @default(autoincrement())
-  dni             String    @unique
+  id_postulacion  Int         @id @default(autoincrement())
+  dni             String      @unique
   celular         String
-  pais            String?   @default("Argentina")
-  provincia       String?   @default("Catamarca")
-  localidad       String
+  pais            String      @default("Argentina") //PENDIENTE
+  provincia       String      @default("Catamarca") //PENDIENTE
+  localidad       String //PENDIENTE
   nom_emprend     String
   desc_emprend    String 
   trayectoria     String?
-  std_postulacion String?   @default("Pendiente")
+  std_postulacion EstadoPostulacion @default(PENDIENTE)
   observacion     String?
 
-  visitanteId     Int? 
-  visitante       Usuario?  @relation(fields: [visitanteId], references: [id_usuario], onDelete: SetNull)
+  usuarioId       Int         @unique
+  usuario         Usuario     @relation("UsuarioPostula", fields: [usuarioId], references: [id_usuario], onDelete: Cascade)
 
-  adminId         Int?
-  admin           Usuario?  @relation("AdminEvalua", fields: [adminId], references: [id_usuario], onDelete: SetNull)
+  adminId         Int?        @unique
+  admin           Usuario?    @relation("AdminEvalua", fields: [adminId], references: [id_usuario], onDelete: SetNull)
 
-  rubroId         Int?
-  rubro           Rubro?    @relation(fields: [rubroId], references: [id_rubro], onDelete: Restrict)
+  rubroId         Int         @unique
+  rubro           Rubro       @relation(fields: [rubroId], references: [id_rubro], onDelete: Restrict)
 
   artesano        Artesano?
 }
@@ -73,71 +85,67 @@ model Postulacion {
 model Artesano {
   id_artesano     Int         @id @default(autoincrement())
 
-  usuarioID       Int         @unique
-  usuario         Usuario     @relation(fields: [usuarioID], references: [id_usuario], onDelete: Cascade)
+  usuarioId       Int         @unique
+  usuario         Usuario     @relation(fields: [usuarioId], references: [id_usuario], onDelete: Cascade)
 
-  postulacionID   Int         @unique
-  postulacion     Postulacion @relation(fields: [postulacionID], references: [id_postulacion], onDelete: Restrict)
+  postulacionId   Int         @unique
+  postulacion     Postulacion @relation(fields: [postulacionId], references: [id_postulacion], onDelete: Restrict)
 
-  // ¡Le saqué el @unique para evitar el error P2002 que tuviste antes!
-  rubroID         Int         
-  rubro           Rubro       @relation(fields: [rubroID], references: [id_rubro], onDelete: Restrict)
+  standId         Int?        @unique
+  stand           Stand?      @relation(fields: [standId], references: [id_stand], onDelete: SetNull)
 
   productos       Producto[]
-  stand           Stand?
 }
 
 model Producto {
-  id_producto   Int       @id @default(autoincrement())
-  nom_producto  String
-  desc_producto String?
-  precio        Decimal
-  std_producto  String    @default("Stock")
+  id_producto     Int         @id @default(autoincrement())
+  nom_producto    String
+  desc_producto   String?
+  precio          Decimal
+  std_producto    Boolean      @default(true)
 
-  artesanoID    Int
-  artesano      Artesano  @relation(fields: [artesanoID], references: [id_artesano], onDelete: Cascade)
+  artesanoId      Int         @unique
+  artesano        Artesano    @relation(fields: [artesanoId], references: [id_artesano], onDelete: Cascade)
 }
 
 model Pabellon {
-  id_pabellon   Int       @id @default(autoincrement())
-  nom_pabellon  String
-  desc_pabellon String?
-  sectores      Sector[]
+  id_pabellon     Int         @id @default(autoincrement())
+  nom_pabellon    String
+  desc_pabellon   String?
 
-  @@map("pabellones")
+  sectores        Sector[]
 }
 
 model Sector {
-  id_sector   Int       @id @default(autoincrement())
-  nom_sector  String
-  id_pabellon Int
-  pabellon    Pabellon  @relation(fields: [id_pabellon], references: [id_pabellon], onDelete: Cascade)
-  stands      Stand[]
+  id_sector       Int         @id @default(autoincrement())
+  nom_sector      String
 
-  @@map("sectores")
+  pabellonId      Int         @unique
+  pabellon        Pabellon    @relation(fields: [pabellonId], references: [id_pabellon], onDelete: Cascade)
+
+  stands          Stand[]
 }
 
 model Stand {
-  id_stand    Int       @id @default(autoincrement())
-  codigo      String    @unique
-  latitud     Float?
-  longitud    Float?
-  std_stand   String    @default("En preparación")
+  id_stand        Int         @id @default(autoincrement())
+  codigo          String      @unique
+  latitud         Decimal?
+  longitud        Decimal?
+  std_stand       EstadoStand @default(MANTENIMIENTO)
   
-  id_sector   Int
-  sector      Sector    @relation(fields: [id_sector], references: [id_sector], onDelete: Cascade)
+  sectorId        Int
+  sector          Sector      @relation(fields: [sectorId], references: [id_sector], onDelete: Cascade)
   
-  id_artesano Int?      @unique
-  artesano    Artesano? @relation(fields: [id_artesano], references: [id_artesano], onDelete: SetNull)
-
-  @@map("stands")
+  artesano        Artesano?
 }
 
+
+//REVISAR
 model Consulta {
-  id_consulta Int       @id @default(autoincrement())
-  metodo      String
-  endpoint    String
-  query       String?
-  params      String?
-  createAt   DateTime   @default(now())
+  id_consulta     Int         @id @default(autoincrement())
+  metodo          String
+  endpoint        String
+  query           String?
+  params          String?
+  createAt        DateTime    @default(now())
 }
