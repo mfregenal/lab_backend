@@ -1,4 +1,4 @@
-import { crearStandSchema, consultarStandsSchemas } from "../validators/stands.schemas.js";
+import { crearStandSchema, consultarStandsSchemas } from "../validators/stand.schema.js";
 
 export const validarCreacionStand = (req, res, next) => {
     const resultado = crearStandSchema.safeParse(
