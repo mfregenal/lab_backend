@@ -6,13 +6,15 @@ import { obtenerSectores,
     actualizarSector,
     eliminarSector,
  } from "../controllers/sector.controller.js";
+ import { validarSectorCreacion } from "../middlewares/validarCreacionSectorMiddleware.js";
+ import { validarSectorActualizacion } from "../middlewares/validarActualizacionSectorMiddleware.js";
 
  const router = Router();
 
  router.get('/',obtenerSectores);
  router.get('/:id',validarId,obtenerSectorPorId);
- router.post('/',crearSector);
- router.put('/:id',validarId,actualizarSector);
+ router.post('/',validarSectorCreacion,crearSector);
+ router.put('/:id',validarId,validarSectorActualizacion,actualizarSector);
  router.delete('/:id',validarId,eliminarSector);
 
  export default router;
