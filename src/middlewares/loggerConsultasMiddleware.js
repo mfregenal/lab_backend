@@ -5,8 +5,9 @@ export const loggerConsultas = (req, res, next) => {
     try {
       const endpoint = req.originalUrl
       const metodo = req.method
-      const query = JSON.stringify({ ...req.query } || {})
-      const params = JSON.stringify({ ...req.params } || {})
+
+      const query = Object.keys(req.query).length > 0 ? req.query : null
+      const params = Object.keys(req.params).length > 0 ? req.params : null
 
       await guardarConsulta({ metodo, endpoint, query, params })
     } catch (error) {

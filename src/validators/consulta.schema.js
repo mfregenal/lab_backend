@@ -6,8 +6,8 @@ const regexFecha = /^\d{2}-\d{2}-\d{4}$/
 export const crearConsultaSchema = z.object({
   metodo: z.string().min(1, "El método es requerido"),
   endpoint: z.string().min(1, "El endpoint es requerido"),
-  query: z.string().optional(),
-  params: z.string().optional()
+  query: z.record(z.any()).nullable().optional(),
+  params: z.record(z.any()).nullable().optional()
 })
 
 export const ConsultarConsultasSchema = z.object({
