@@ -15,8 +15,26 @@ export const ConsultarConsultasSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100, "Máximo 100 por página").optional().default(10),
   metodo: z.string().optional(),
   endpoint: z.string().optional(),
-  fechaDesde: z.string().regex(regexFecha, "fechaDesde debe tener formato dd-mm-yyyy").optional(),
-  fechaHasta: z.string().regex(regexFecha, "fechaHasta debe tener formato dd-mm-yyyy").optional(),
+  fechaDesde: z.string().regex(regexFecha, "fechaDesde debe tener formato dd-mm-yyyy")
+              .transform( (valor) => {
+                const [dia, mes, anio] = valor.split('-')
+                return new Date(anio, mes - 1, dia, 0, 0, 0, 0)
+              }).optional(),
+  fechaHasta: z.string().regex(regexFecha, "fechaHasta debe tener formato dd-mm-yyyy")
+              .transform( (valor) => {
+                const [dia, mes, anio] = valor.split('-')
+                return new Date(anio, mes - 1, dia, 23, 59, 59, 999)
+              }).optional(),
   sortBy: z.enum(['createAt', 'metodo', 'endpoint', 'id_consulta']).optional().default('id_consulta'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc')
+})
+
+.refine((data) => {
+  if (data.fechaDesde && data.fechaHasta) {
+    return data.fechaDesde <= data.fechaHasta
+  }
+  return true // Si falta alguna de las dos fechas, pasa la validación
+}, {
+  message: "El rango de fechas es inválido: 'fechaDesde' no puede ser posterior a 'fechaHasta'",
+  path: ["fechaHasta"] // En qué campo queremos que Zod marque el error
 })
