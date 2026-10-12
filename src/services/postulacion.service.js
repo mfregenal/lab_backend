@@ -2,16 +2,13 @@ import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
 
 export const crearPostulacionService = async (dataDTO) => {
-
     const rubroExiste = await prisma.rubro.findUnique({
         where: { id_rubro: dataDTO.rubroId }
     });
 
     if (!rubroExiste) {
-    
-        throw crearError(`El rubro (categoría) con ID ${dataDTO.rubroId} no existe.`, 404);
+        throw crearError(`El rubro con ID ${dataDTO.rubroId} no existe.`, 404);
     }
-
 
     const nuevaPostulacion = await prisma.postulacion.create({
         data: dataDTO 
@@ -21,13 +18,12 @@ export const crearPostulacionService = async (dataDTO) => {
 };
 
 export const obtenerPostulacionesService = async (filtrosDTO) => {
-
-    const { estado, nombre, dni, pais } = filtrosDTO;
+    const { estado, nombre, dni, pais, page, limit } = filtrosDTO;
     
     const condiciones = {};
 
     if (estado) {
-        condiciones.std_postulacion = estado.toUpperCase();
+        condiciones.std_postulacion = estado;
     }
     if (nombre) {
         condiciones.nom_emprend = { contains: nombre, mode: 'insensitive' };
@@ -39,9 +35,17 @@ export const obtenerPostulacionesService = async (filtrosDTO) => {
         condiciones.pais = { contains: pais, mode: 'insensitive' };
     }
 
+    const totalRegistros = await prisma.postulacion.count({
+        where: condiciones
+    });
+
+
+    const skip = (page - 1) * limit;
 
     const postulaciones = await prisma.postulacion.findMany({
         where: condiciones,
+        skip: skip,
+        take: limit, 
         include: {
             usuario: { select: { nombre: true, apellido: true, email: true } },
             rubro: { select: { nom_rubro: true } },
@@ -49,5 +53,61 @@ export const obtenerPostulacionesService = async (filtrosDTO) => {
         }
     });
 
-    return postulaciones;
+    return {
+        data: postulaciones,
+        meta: {
+            total: totalRegistros,
+            page: page,
+            limit: limit,
+            totalPages: Math.ceil(totalRegistros / limit) 
+        }
+    };
+};
+
+
+export const obtenerPostulacionIdService = async (id) => {
+    const postulacion = await prisma.postulacion.findUnique({
+        where: { id_postulacion: id },
+        include: {
+            usuario: { select: { nombre: true, apellido: true, email: true } },
+            rubro: true
+        }
+    });
+
+    if (!postulacion) {
+        throw crearError(`No existe una postulación con id ${id}`, 404);
+    }
+
+    return postulacion;
+};
+
+export const actualizarPostulacionService = async (id, dataDTO) => {
+    try {
+        const postulacionActualizada = await prisma.postulacion.update({
+            where: { id_postulacion: id },
+            data: dataDTO
+        });
+        return postulacionActualizada;
+    } catch (error) {
+        if (error.code === 'P2025') {
+            throw crearError(`No existe una postulación con id ${id}`, 404);
+        }
+        if (error.code === 'P2002') {
+            throw crearError('Ya existe otra postulación registrada con ese DNI', 400);
+        }
+        throw error; 
+    }
+};
+
+export const eliminarPostulacionService = async (id) => {
+    try {
+        await prisma.postulacion.delete({
+            where: { id_postulacion: id }
+        });
+    } catch (error) {
+        if (error.code === 'P2025') {
+            throw crearError(`No existe una postulación con id ${id}`, 404);
+        }
+        throw error;
+    }
 };

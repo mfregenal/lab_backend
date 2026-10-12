@@ -1,14 +1,10 @@
 import { crearError } from '../utils/errores.js';
-import { crearPostulacionService, obtenerPostulacionesService } from '../services/postulacion.service.js';
-
+import { crearPostulacionService, obtenerPostulacionesService, obtenerPostulacionIdService, actualizarPostulacionService, eliminarPostulacionService } from '../services/postulacion.service.js';
 
 export const obtenerPostulaciones = async (req, res, next) => {
     try {
-  
         const filtrosDTO = req.query;
-
         const postulaciones = await obtenerPostulacionesService(filtrosDTO);
-        
         res.json(postulaciones);
     } catch (error) {
         console.error(error);
@@ -19,21 +15,11 @@ export const obtenerPostulaciones = async (req, res, next) => {
 export const obtenerPostulacionId = async (req, res, next) => {
     try {
         const id = req.id;
-        const postulacion = await prisma.postulacion.findUnique({
-            where: { id_postulacion: id },
-            include: {
-                visitante: { select: { nombre: true, apellido: true, email: true } },
-                rubro: true
-            }
-        });
-
-        if (!postulacion) {
-            return next(crearError(`No existe una postulación con id ${id}`, 404));
-        }
-
+        const postulacion = await obtenerPostulacionIdService(id);
         res.json(postulacion);
     } catch (error) {
         console.error(error);
+        if (error.statusCode) return next(error);
         next(crearError('Error al buscar la postulación', 500));
     }
 };
@@ -41,17 +27,11 @@ export const obtenerPostulacionId = async (req, res, next) => {
 export const crearPostulacion = async (req, res, next) => {
     try {
         const postulacionDTO = req.body;
-
         const nuevaPostulacion = await crearPostulacionService(postulacionDTO);
-
         res.status(201).json(nuevaPostulacion);
     } catch (error) {
         console.error(error);
-        
-        if (error.statusCode) {
-            return next(error);
-        }
-
+        if (error.statusCode) return next(error);
         next(crearError('Error interno al crear la postulación', 500));
     }
 };
@@ -59,39 +39,20 @@ export const crearPostulacion = async (req, res, next) => {
 export const actualizarPostulacion = async (req, res, next) => {
     try {
         const id = req.id; 
-        
-        const { dni, celular, pais, provincia, localidad, nom_emprend, desc_emprend, trayectoria } = req.body;
+        const dataDTO = req.body; // Los datos a actualizar
 
-        const postulacionActualizada = await prisma.postulacion.update({
-            where: { id_postulacion: id },
-            data: {
-                dni, 
-                celular, 
-                pais, 
-                provincia, 
-                localidad, 
-                nom_emprend, 
-                desc_emprend, 
-                trayectoria
-            }
-        });
-
+        const postulacionActualizada = await actualizarPostulacionService(id, dataDTO);
         res.json(postulacionActualizada);
     } catch (error) {
         console.error(error);
-        if (error.code === 'P2025') {
-            return next(crearError(`No existe una postulación con id ${req.id}`, 404));
-        }
-        if (error.code === 'P2002') {
-            return next(crearError('Ya existe otra postulación registrada con ese DNI', 400));
-        }
+        if (error.statusCode) return next(error);
         next(crearError('Error al actualizar la postulación', 500));
     }
 };
 
 export const eliminarPostulacion = async (req, res, next) => {
     try {
-        const id = parseInt(req.params.id); // o req.id, dependiendo de tu middleware validarIdMiddleware
+        const id = parseInt(req.params.id);
         await eliminarPostulacionService(id);
         res.status(204).send();
     } catch (error) {
