@@ -21,3 +21,8 @@ export const ConsultarUsuariosSchema = z.object({
   sortBy: z.enum(['createdAt', 'nombre', 'apellido']).optional().default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc')
 })
+
+export const iniciarSesionSchema = z.object({
+  email: z.string().email("Formato de email inválido").toLowerCase(),
+  contrasena: z.string().min(1, "La contraseña es requerida")
+})

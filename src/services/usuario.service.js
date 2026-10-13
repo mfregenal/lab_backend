@@ -91,3 +91,19 @@ export const eliminar = async (id) => {
     throw error
   }
 }
+
+export const iniciarSesion = async (datos) => {
+  const usuario = await prisma.usuario.findUnique({where: { email: datos.email}})
+
+  if (!usuario) throw crearError('Email o contraseña incorrectos', 401)
+
+  const contrasenaValida = await bcrypt.compare( datos.contrasena, usuario.contrasena )
+
+  if (!contrasenaValida) {
+    throw crearError('Email o contraseña incorrectos', 401)
+  }
+
+  delete usuario.contrasena // Eliminamos la contraseña antes de devolver el usuario
+
+  return usuario
+}
