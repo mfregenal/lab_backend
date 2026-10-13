@@ -1,9 +1,12 @@
 import prisma from '../config/prisma.js'
 import { crearError } from '../utils/errores.js'
+import bcrypt from 'bcrypt'
 
 const SELECT_PUBLIC_USER = {
   id_usuario: true, nombre: true, apellido: true, email: true, rol: true, std_usuario: true, createdAt: true, updatedAt: true
 }
+
+const FACTOR_COSTO=10
 
 export const obtenerTodos = async (query) => {
   const { page, limit, nombre, email, sortBy, sortOrder } = query
@@ -53,6 +56,9 @@ export const crear = async (datos) => {
   // Verificar si el email existe consultando la BD
   const existe = await prisma.usuario.findUnique({ where: { email: datos.email } })
   if (existe) throw crearError('El email ya se encuentra en uso', 409)
+
+  const contrasenaHash = await bcrypt.hash(datos.contrasena, FACTOR_COSTO)
+  datos.contrasena = contrasenaHash
 
   return await prisma.usuario.create({
     data: datos,
