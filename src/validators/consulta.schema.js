@@ -11,8 +11,8 @@ export const crearConsultaSchema = z.object({
 })
 
 export const ConsultarConsultasSchema = z.object({
-  page: z.coerce.number().int().min(1, "La página debe ser mayor a 0").optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100, "Máximo 100 por página").optional().default(10),
+  pagina: z.coerce.number().int().min(1, "La página debe ser mayor a 0").optional().default(1),
+  limite: z.coerce.number().int().min(1).max(100, "Máximo 100 por página").optional().default(10),
   metodo: z.string().optional(),
   endpoint: z.string().optional(),
   fechaDesde: z.string().regex(regexFecha, "fechaDesde debe tener formato dd-mm-yyyy")
@@ -25,8 +25,8 @@ export const ConsultarConsultasSchema = z.object({
                 const [dia, mes, anio] = valor.split('-')
                 return new Date(anio, mes - 1, dia, 23, 59, 59, 999)
               }).optional(),
-  sortBy: z.enum(['createAt', 'metodo', 'endpoint', 'id_consulta']).optional().default('id_consulta'),
-  sortOrder: z.enum(['asc', 'desc']).optional().default('desc')
+  ordenPor: z.enum(['createAt', 'metodo', 'endpoint', 'id_consulta']).optional().default('id_consulta'),
+  direccion: z.enum(['asc', 'desc']).optional().default('desc')
 })
 
 .refine((data) => {
