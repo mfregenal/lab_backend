@@ -41,7 +41,19 @@ model Usuario {
   std_usuario     Boolean?    @default(true)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+  id_usuario      Int         @id @default(autoincrement())
+  nombre          String
+  apellido        String
+  email           String      @unique
+  contrasena      String
+  rol             Rol         @default(ARTESANO)
+  std_usuario     Boolean?    @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
+  artesano                Artesano?
+  postulaciones           Postulacion?  @relation("UsuarioPostula")
+  postulacionesEvaluadas  Postulacion[] @relation("AdminEvalua")
   artesano                Artesano?
   postulaciones           Postulacion?  @relation("UsuarioPostula")
   postulacionesEvaluadas  Postulacion[] @relation("AdminEvalua")
@@ -53,7 +65,13 @@ model Rubro {
   desc_rubro      String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+  id_rubro        Int         @id @default(autoincrement())
+  nom_rubro       String
+  desc_rubro      String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
+  postulaciones   Postulacion[]
   postulaciones   Postulacion[]
 }
 
@@ -61,22 +79,28 @@ model Postulacion {
   id_postulacion  Int         @id @default(autoincrement())
   dni             String      @unique
   celular         String
-  pais            String      @default("Argentina") //PENDIENTE
-  provincia       String      @default("Catamarca") //PENDIENTE
-  localidad       String //PENDIENTE
+  provincia       String            
+  localidad       String            
   nom_emprend     String
   desc_emprend    String 
   trayectoria     String?
+  std_postulacion EstadoPostulacion @default(PENDIENTE)
   std_postulacion EstadoPostulacion @default(PENDIENTE)
   observacion     String?
 
   usuarioId       Int         @unique
   usuario         Usuario     @relation("UsuarioPostula", fields: [usuarioId], references: [id_usuario], onDelete: Cascade)
+  usuarioId       Int         @unique
+  usuario         Usuario     @relation("UsuarioPostula", fields: [usuarioId], references: [id_usuario], onDelete: Cascade)
 
   adminId         Int?        @unique
   admin           Usuario?    @relation("AdminEvalua", fields: [adminId], references: [id_usuario], onDelete: SetNull)
+  adminId         Int?        //provoca que  el administrador solo pueda aprobar a un único usuario.
+  admin           Usuario?    @relation("AdminEvalua", fields: [adminId], references: [id_usuario], onDelete: SetNull)
 
   rubroId         Int         @unique
+  rubro           Rubro       @relation(fields: [rubroId], references: [id_rubro], onDelete: Restrict)
+  rubroId         Int         //solo uno podia postularse uno por rubro
   rubro           Rubro       @relation(fields: [rubroId], references: [id_rubro], onDelete: Restrict)
 
   artesano        Artesano?
@@ -87,10 +111,16 @@ model Artesano {
 
   usuarioId       Int         @unique
   usuario         Usuario     @relation(fields: [usuarioId], references: [id_usuario], onDelete: Cascade)
+  usuarioId       Int         @unique
+  usuario         Usuario     @relation(fields: [usuarioId], references: [id_usuario], onDelete: Cascade)
 
   postulacionId   Int         @unique
   postulacion     Postulacion @relation(fields: [postulacionId], references: [id_postulacion], onDelete: Restrict)
+  postulacionId   Int         @unique
+  postulacion     Postulacion @relation(fields: [postulacionId], references: [id_postulacion], onDelete: Restrict)
 
+  standId         Int?        @unique
+  stand           Stand?      @relation(fields: [standId], references: [id_stand], onDelete: SetNull)
   standId         Int?        @unique
   stand           Stand?      @relation(fields: [standId], references: [id_stand], onDelete: SetNull)
 
@@ -106,9 +136,16 @@ model Producto {
 
   artesanoId      Int         @unique
   artesano        Artesano    @relation(fields: [artesanoId], references: [id_artesano], onDelete: Cascade)
+  artesanoId      Int         //cunado un artesno quiera subir otro producto le va a dar error
+  artesano        Artesano    @relation(fields: [artesanoId], references: [id_artesano], onDelete: Cascade)
 }
 
 model Pabellon {
+  id_pabellon     Int         @id @default(autoincrement())
+  nom_pabellon    String
+  desc_pabellon   String?
+
+  sectores        Sector[]
   id_pabellon     Int         @id @default(autoincrement())
   nom_pabellon    String
   desc_pabellon   String?
@@ -120,7 +157,7 @@ model Sector {
   id_sector       Int         @id @default(autoincrement())
   nom_sector      String
 
-  pabellonId      Int         @unique
+  pabellonId      Int         //el pabellon solo tendria un sector
   pabellon        Pabellon    @relation(fields: [pabellonId], references: [id_pabellon], onDelete: Cascade)
 
   stands          Stand[]
@@ -132,7 +169,14 @@ model Stand {
   latitud         Decimal?
   longitud        Decimal?
   std_stand       EstadoStand @default(MANTENIMIENTO)
+  id_stand        Int         @id @default(autoincrement())
+  codigo          String      @unique
+  latitud         Decimal?
+  longitud        Decimal?
+  std_stand       EstadoStand @default(MANTENIMIENTO)
   
+  sectorId        Int
+  sector          Sector      @relation(fields: [sectorId], references: [id_sector], onDelete: Cascade)
   sectorId        Int
   sector          Sector      @relation(fields: [sectorId], references: [id_sector], onDelete: Cascade)
   

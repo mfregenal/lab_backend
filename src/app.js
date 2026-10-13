@@ -8,6 +8,7 @@ import pabellonRoutes from './routes/pabellon.routes.js'
 import sectorRoutes from './routes/sector.routes.js'
 import standRoutes from './routes/stand.routes.js'
 import consultaRoutes from './routes/consulta.routes.js'
+import ubicacionesRoutes from './routes/ubicacion.routes.js';
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { errorMiddleware } from './middlewares/errorMiddleware.js'
 import { loggerConsultas } from './middlewares/loggerConsultasMiddleware.js'
@@ -30,6 +31,7 @@ app.use( '/postulacion', postulacionRoutes )
 app.use('/pabellones', pabellonRoutes)
 app.use('/sectores', sectorRoutes)
 app.use('/stands', standRoutes)
+app.use('/api/ubicaciones', ubicacionesRoutes);
 
 // Bienvenida
 app.get( '/', ( req, res ) => {
