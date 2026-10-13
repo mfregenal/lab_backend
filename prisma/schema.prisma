@@ -15,7 +15,6 @@ datasource db {
 enum Rol {
   ARTESANO
   ADMINISTRADOR
-  VISITANTE
 }
 
 enum EstadoPostulacion {
@@ -59,8 +58,8 @@ model Rubro {
 }
 
 model Postulacion {
-  id_postulacion  Int               @id @default(autoincrement())
-  dni             String            @unique
+  id_postulacion  Int         @id @default(autoincrement())
+  dni             String      @unique
   celular         String
   provincia       String            
   localidad       String            
@@ -102,9 +101,9 @@ model Producto {
   nom_producto    String
   desc_producto   String?
   precio          Decimal
-  std_producto    Boolean      @default(true)
+  std_producto    Boolean     @default(true)
 
-  artesanoId      Int         //cunado un artesno quiera subir otro producto le va a dar error
+  artesanoId      Int         //cuando un artesano quiera subir otro producto le va a dar error
   artesano        Artesano    @relation(fields: [artesanoId], references: [id_artesano], onDelete: Cascade)
 }
 
@@ -139,13 +138,11 @@ model Stand {
   artesano        Artesano?
 }
 
-
-//REVISAR
 model Consulta {
   id_consulta     Int         @id @default(autoincrement())
   metodo          String
   endpoint        String
-  query           String?
-  params          String?
+  query           Json?
+  params          Json?
   createAt        DateTime    @default(now())
 }
