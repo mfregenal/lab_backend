@@ -6,10 +6,11 @@ import { obtenerSectores,
     actualizarSector,
     eliminarSector,
  } from "../controllers/sector.controller.js";
+ import { loggerConsultas } from '../middlewares/loggerConsultasMiddleware.js'
 
  const router = Router();
 
- router.get('/',obtenerSectores);
+ router.get('/',loggerConsultas,obtenerSectores);
  router.get('/:id',validarId,obtenerSectorPorId);
  router.post('/',crearSector);
  router.put('/:id',validarId,actualizarSector);
