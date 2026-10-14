@@ -67,7 +67,10 @@ export const crear = async (datos) => {
         throw crearError(`El rubro con ID ${postulacion.rubroId} no existe`, 404)
       }
     }
-
+    
+    const contrasenaHash = await bcrypt.hash(datosUsuario.contrasena, FACTOR_COSTO)
+    datosUsuario.contrasena = contrasenaHash
+    
     const usuario = await tx.usuario.create({
       data: { ...datosUsuario, rol },
       select: SELECT_PUBLIC_USER
