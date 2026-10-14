@@ -26,8 +26,19 @@ export const crearPabellon = async (datosPabellon) => {
   });
 };
 
-export const consultarPabellones = async () => {
+export const consultarPabellones = async (filtros = {}) => {
+  const { nom_pabellon } = filtros;
+  const where = {};
+
+  if (nom_pabellon && nom_pabellon.trim() !== '') {
+    where.nom_pabellon = {
+      contains: nom_pabellon.trim(),
+      mode: 'insensitive',
+    };
+  }
+
   return prisma.pabellon.findMany({
+    where,
     include: {
       sectores: true,
     },

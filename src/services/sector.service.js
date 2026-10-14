@@ -22,7 +22,7 @@ export const crearSector = async (datosSector) => {
 
     if (nombreExiste) {
         throw crearError(
-            `Ya existe un sector "${nom_sector}" registrado en este pabellón.`,409);
+            `Ya existe un sector "${nom_sector}" registrado en este pabellón.`, 409);
     }
 
     return prisma.sector.create({
@@ -38,11 +38,18 @@ export const crearSector = async (datosSector) => {
 
 // 2. Consultar / Listar Sectores (filtro opcional por id_pabellon en query)
 export const consultarSectores = async (filtros = {}) => {
-    const { id_pabellon } = filtros;
+    const { id_pabellon, nom_sector } = filtros;
     const where = {};
 
     if (id_pabellon) {
         where.id_pabellon = Number(id_pabellon);
+    }
+
+    if (nom_sector && nom_sector.trim() !== '') {
+        where.nom_sector = {
+            contains: nom_sector.trim(),
+            mode: "insensitive",
+        };
     }
 
     return prisma.sector.findMany({
@@ -85,7 +92,7 @@ export const actualizarSector = async (id, datos) => {
     const sectorActual = await obtenerSectorPorId(idNum);
 
     const idPabellonFinal =
-        datos.id_pabellon !== undefined? Number(datos.id_pabellon): sectorActual.id_pabellon;
+        datos.id_pabellon !== undefined ? Number(datos.id_pabellon) : sectorActual.id_pabellon;
 
     if (datos.id_pabellon && datos.id_pabellon !== sectorActual.id_pabellon) {
         const pabellonExiste = await prisma.pabellon.findUnique({

@@ -3,7 +3,7 @@ import * as pabellonService from '../services/pabellon.service.js';
 
 export const obtenerPabellones = async (req, res, next) => {
   try {
-    const resultado = await pabellonService.consultarPabellones();
+    const resultado = await pabellonService.consultarPabellones(req.query);
     return res.json(resultado);
   } catch (error) {
     next(error);
