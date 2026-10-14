@@ -61,9 +61,8 @@ model Postulacion {
   id_postulacion  Int         @id @default(autoincrement())
   dni             String      @unique
   celular         String
-  pais            String      @default("Argentina") //PENDIENTE
-  provincia       String      @default("Catamarca") //PENDIENTE
-  localidad       String //PENDIENTE
+  provincia       String            
+  localidad       String            
   nom_emprend     String
   desc_emprend    String 
   trayectoria     String?
@@ -73,10 +72,10 @@ model Postulacion {
   usuarioId       Int         @unique
   usuario         Usuario     @relation("UsuarioPostula", fields: [usuarioId], references: [id_usuario], onDelete: Cascade)
 
-  adminId         Int?        @unique
+  adminId         Int?        //provoca que  el administrador solo pueda aprobar a un único usuario.
   admin           Usuario?    @relation("AdminEvalua", fields: [adminId], references: [id_usuario], onDelete: SetNull)
 
-  rubroId         Int         @unique
+  rubroId         Int         //solo uno podia postularse uno por rubro
   rubro           Rubro       @relation(fields: [rubroId], references: [id_rubro], onDelete: Restrict)
 
   artesano        Artesano?
@@ -104,7 +103,7 @@ model Producto {
   precio          Decimal
   std_producto    Boolean     @default(true)
 
-  artesanoId      Int         @unique
+  artesanoId      Int         //cuando un artesano quiera subir otro producto le va a dar error
   artesano        Artesano    @relation(fields: [artesanoId], references: [id_artesano], onDelete: Cascade)
 }
 
@@ -120,7 +119,7 @@ model Sector {
   id_sector       Int         @id @default(autoincrement())
   nom_sector      String
 
-  pabellonId      Int         @unique
+  pabellonId      Int         //el pabellon solo tendria un sector
   pabellon        Pabellon    @relation(fields: [pabellonId], references: [id_pabellon], onDelete: Cascade)
 
   stands          Stand[]

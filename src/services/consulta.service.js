@@ -33,7 +33,7 @@ export const obtenerTodos = async (query) => {
       total,
       pagina,
       limite,
-      totalPages: Math.ceil(total / limite)
+      totalPaginas: Math.ceil(total / limite)
     }
   }
 }

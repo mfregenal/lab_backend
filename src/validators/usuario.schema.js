@@ -1,7 +1,7 @@
 import { z } from 'zod'
+import { datosPostulacionUsuarioSchema } from './postulacion.schema.js'
 
-// Esquema para la creación (POST)
-export const crearUsuarioSchema = z.object({
+const datosUsuarioSchema = z.object({
   nombre: z.string().min(2, "El nombre debe tener al menos 2 letras").max(50),
   apellido: z.string().min(2, "El apellido debe tener al menos 2 letras").max(50),
   email: z.string().email("Formato de email inválido").toLowerCase(),
@@ -9,8 +9,27 @@ export const crearUsuarioSchema = z.object({
   rol: z.enum(['ARTESANO', 'ADMINISTRADOR']).optional().default('ARTESANO')
 })
 
-// Esquema para actualización (PUT) - partial() hace que los campos sean opcionales
-export const actualizarUsuarioSchema = crearUsuarioSchema.partial()
+export const crearUsuarioSchema = datosUsuarioSchema.extend({
+  postulacion: datosPostulacionUsuarioSchema.optional()
+}).superRefine((datos, contexto) => {
+  if (datos.rol === 'ARTESANO' && !datos.postulacion) {
+    contexto.addIssue({
+      code: 'custom',
+      path: ['postulacion'],
+      message: 'Los datos de postulación son obligatorios para los artesanos'
+    })
+  }
+
+  if (datos.rol === 'ADMINISTRADOR' && datos.postulacion) {
+    contexto.addIssue({
+      code: 'custom',
+      path: ['postulacion'],
+      message: 'Los administradores no pueden tener una postulación'
+    })
+  }
+})
+
+export const actualizarUsuarioSchema = datosUsuarioSchema.partial()
 
 // Esquema para validar los query params del GET /usuarios
 export const ConsultarUsuariosSchema = z.object({
