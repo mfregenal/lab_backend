@@ -17,8 +17,8 @@ export const validarCreacionStand = (req, res, next) => {
     return next();
 };
 
-export const validarConsultaStands = (req,res,next) => {
-    const resultado =consultarStandsSchemas.safeParse(req.query);
+export const validarConsultaStands = (req, res, next) => {
+    const resultado = consultarStandsSchemas.safeParse(req.query);
 
     if (!resultado.success) {
         return res.status(400).json({
@@ -30,5 +30,19 @@ export const validarConsultaStands = (req,res,next) => {
 
     req.consultaStands = resultado.data;
 
+    return next();
+};
+
+export const validarActualizacionStand = (req, res, next) => {
+    const resultado = actualizarStandSchema.safeParse(req.body);
+
+    if (!resultado.success) {
+        return res.status(400).json({
+            mensaje: "Los datos para actualizar el stand son inválidos.",
+            errores: resultado.error.issues,
+        });
+    }
+
+    req.body = resultado.data;
     return next();
 };
