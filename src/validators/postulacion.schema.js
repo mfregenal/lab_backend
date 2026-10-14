@@ -34,6 +34,6 @@ export const consultarPostulacionesSchema = z.object({
     dni: z.string().optional(),
     provincia: z.string().optional(),
     
-    page: z.coerce.number().int().positive().optional().default(1),
-    limit: z.coerce.number().int().positive().optional().default(10)
+    pagina: z.coerce.number().int().positive().optional().default(1),
+    limite: z.coerce.number().int().positive().optional().default(10)
 });

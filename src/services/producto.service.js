@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
 
 export const obtenerProductosService = async (filtrosDTO) => {
-    const { nombre, rubro, stand, std_producto, page, limit } = filtrosDTO;
+    const { nombre, rubro, stand, std_producto, pagina, limite } = filtrosDTO;
 
     const condiciones = {};
 
@@ -28,12 +28,12 @@ export const obtenerProductosService = async (filtrosDTO) => {
     }
 
     const totalRegistros = await prisma.producto.count({ where: condiciones });
-    const skip = (page - 1) * limit;
+    const skip = (pagina - 1) * limite;
 
     const productos = await prisma.producto.findMany({
         where: condiciones,
         skip: skip,
-        take: limit,
+        take: limite,
         include: {
             artesano: {
                 include: {
@@ -49,9 +49,9 @@ export const obtenerProductosService = async (filtrosDTO) => {
         data: productos,
         meta: {
             total: totalRegistros,
-            page,
-            limit,
-            totalPages: Math.ceil(totalRegistros / limit)
+            page: pagina,
+            limit: limite,
+            totalPages: Math.ceil(totalRegistros / limite)
         }
     };
 };

@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
 
 export const obtenerArtesanosService = async (filtrosDTO) => {
-    const { nombre, apellido, rubro, stand, page, limit } = filtrosDTO;
+    const { nombre, apellido, rubro,provincia, localidad, stand, pagina, limite } = filtrosDTO;
 
     const condiciones = {};
 
@@ -12,10 +12,18 @@ export const obtenerArtesanosService = async (filtrosDTO) => {
         if (apellido) condiciones.usuario.apellido = { contains: apellido, mode: 'insensitive' };
     }
 
-    if (rubro) {
-        condiciones.postulacion = {
-            rubro: { nom_rubro: { contains: rubro, mode: 'insensitive' } }
-        };
+    if (rubro || provincia || localidad) {
+        condiciones.postulacion = {};
+        
+        if (rubro) {
+            condiciones.postulacion.rubro = { nom_rubro: { contains: rubro, mode: 'insensitive' } };
+        }
+        if (provincia) {
+            condiciones.postulacion.provincia = { contains: provincia, mode: 'insensitive' };
+        }
+        if (localidad) {
+            condiciones.postulacion.localidad = { contains: localidad, mode: 'insensitive' };
+        }
     }
 
     if (stand) {
@@ -23,12 +31,12 @@ export const obtenerArtesanosService = async (filtrosDTO) => {
     }
 
     const totalRegistros = await prisma.artesano.count({ where: condiciones });
-    const skip = (page - 1) * limit;
+    const skip = (pagina - 1) * limite;
 
     const artesanos = await prisma.artesano.findMany({
         where: condiciones,
         skip: skip,
-        take: limit,
+        take: limite,
         include: {
             usuario: { select: { nombre: true, apellido: true, email: true } },
             postulacion: { 
@@ -42,9 +50,9 @@ export const obtenerArtesanosService = async (filtrosDTO) => {
         data: artesanos,
         meta: {
             total: totalRegistros,
-            page,
-            limit,
-            totalPages: Math.ceil(totalRegistros / limit)
+            page: pagina,
+            limit: limite,
+            totalPages: Math.ceil(totalRegistros / limite)
         }
     };
 };

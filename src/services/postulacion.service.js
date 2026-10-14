@@ -18,7 +18,7 @@ export const crearPostulacionService = async (dataDTO) => {
 };
 
 export const obtenerPostulacionesService = async (filtrosDTO) => {
-    const { estado, nombre, dni, pais, page, limit } = filtrosDTO;
+    const { estado, nombre, dni, provincia, pagina, limite} = filtrosDTO;
     
     const condiciones = {};
 
@@ -31,8 +31,8 @@ export const obtenerPostulacionesService = async (filtrosDTO) => {
     if (dni) {
         condiciones.dni = { contains: dni };
     }
-    if (pais) {
-        condiciones.pais = { contains: pais, mode: 'insensitive' };
+   if (provincia) {
+        condiciones.provincia = { contains: provincia, mode: 'insensitive' };
     }
 
     const totalRegistros = await prisma.postulacion.count({
@@ -40,12 +40,12 @@ export const obtenerPostulacionesService = async (filtrosDTO) => {
     });
 
 
-    const skip = (page - 1) * limit;
+    const skip = (pagina - 1) * limite;
 
     const postulaciones = await prisma.postulacion.findMany({
         where: condiciones,
         skip: skip,
-        take: limit, 
+        take: limite, 
         include: {
             usuario: { select: { nombre: true, apellido: true, email: true } },
             rubro: { select: { nom_rubro: true } },
@@ -57,9 +57,9 @@ export const obtenerPostulacionesService = async (filtrosDTO) => {
         data: postulaciones,
         meta: {
             total: totalRegistros,
-            page: page,
-            limit: limit,
-            totalPages: Math.ceil(totalRegistros / limit) 
+            page: pagina,
+            limit: limite,
+            totalPages: Math.ceil(totalRegistros / limite) 
         }
     };
 };

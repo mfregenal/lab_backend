@@ -16,6 +16,6 @@ export const consultarProductosSchema = z.object({
     stand: z.string().optional(),
     std_producto: z.coerce.boolean().optional(), 
     
-    page: z.coerce.number().int().positive().optional().default(1),
-    limit: z.coerce.number().int().positive().optional().default(10)
+    pagina: z.coerce.number().int().positive().optional().default(1),
+    limite: z.coerce.number().int().positive().optional().default(10)
 });

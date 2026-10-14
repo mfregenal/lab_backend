@@ -10,8 +10,10 @@ export const consultarArtesanosSchema = z.object({
     nombre: z.string().optional(),
     apellido: z.string().optional(),
     rubro: z.string().optional(),
+    provincia: z.string().optional(),
+    localidad: z.string().optional(),
     stand: z.string().optional(),
     
-    page: z.coerce.number().int().positive().optional().default(1),
-    limit: z.coerce.number().int().positive().optional().default(10)
+    pagina: z.coerce.number().int().positive().optional().default(1),
+    limite: z.coerce.number().int().positive().optional().default(10)
 });
