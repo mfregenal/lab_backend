@@ -17,8 +17,6 @@ const app = express()
 
 app.use( express.json() )
 
-app.use( loggerConsultas )
-
 const PORT = 3000
 
 // Rutas de ambos módulos
