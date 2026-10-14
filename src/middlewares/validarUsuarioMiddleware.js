@@ -1,5 +1,5 @@
 import { crearError, detallarErroresZod } from "../utils/errores.js"
-import { crearUsuarioSchema, ConsultarUsuariosSchema, actualizarUsuarioSchema } from "../validators/usuario.schema.js"
+import { crearUsuarioSchema, ConsultarUsuariosSchema, actualizarUsuarioSchema, iniciarSesionSchema } from "../validators/usuario.schema.js"
 
 export const validarCreacionUsuario = (req, res, next) => {
   const resultado = crearUsuarioSchema.safeParse(req.body)
@@ -35,5 +35,16 @@ export const validarActualizacionUsuario = (req, res, next) => {
   }
 
   req.body = resultado.data
+  next()
+}
+
+export const validarInicioSesion = (req, res, next) => {
+  const resultado = iniciarSesionSchema.safeParse(req.body)
+  if(!resultado.success){
+    const detalles = detallarErroresZod(resultado.error)
+    return next(crearError('Datos de inicio de sesión inválidos', 400, detalles))
+  }
+
+  req.iniciarSesionDTO = resultado.data
   next()
 }

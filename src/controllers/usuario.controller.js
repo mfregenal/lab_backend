@@ -34,3 +34,10 @@ export const eliminarUsuario = async (req, res, next) => {
     res.json({ message: 'Usuario eliminado correctamente' })
   } catch (error) { next(error) }
 }
+
+export const iniciarSesion = async (req, res, next) => {
+  try {
+    const usuario = await UsuarioService.iniciarSesion(req.iniciarSesionDTO)
+    res.status(200).json(usuario)
+  } catch (error) { next(error) }
+}

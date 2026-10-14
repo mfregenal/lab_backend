@@ -1,16 +1,35 @@
 import { z } from 'zod'
+import { datosPostulacionUsuarioSchema } from './postulacion.schema.js'
 
-// Esquema para la creación (POST)
-export const crearUsuarioSchema = z.object({
+const datosUsuarioSchema = z.object({
   nombre: z.string().min(2, "El nombre debe tener al menos 2 letras").max(50),
   apellido: z.string().min(2, "El apellido debe tener al menos 2 letras").max(50),
   email: z.string().email("Formato de email inválido").toLowerCase(),
   contrasena: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
-  rol: z.enum(['visitante', 'artesano', 'administrador']).optional().default('visitante')
+  rol: z.enum(['ARTESANO', 'ADMINISTRADOR']).optional().default('ARTESANO')
 })
 
-// Esquema para actualización (PUT) - partial() hace que los campos sean opcionales
-export const actualizarUsuarioSchema = crearUsuarioSchema.partial()
+export const crearUsuarioSchema = datosUsuarioSchema.extend({
+  postulacion: datosPostulacionUsuarioSchema.optional()
+}).superRefine((datos, contexto) => {
+  if (datos.rol === 'ARTESANO' && !datos.postulacion) {
+    contexto.addIssue({
+      code: 'custom',
+      path: ['postulacion'],
+      message: 'Los datos de postulación son obligatorios para los artesanos'
+    })
+  }
+
+  if (datos.rol === 'ADMINISTRADOR' && datos.postulacion) {
+    contexto.addIssue({
+      code: 'custom',
+      path: ['postulacion'],
+      message: 'Los administradores no pueden tener una postulación'
+    })
+  }
+})
+
+export const actualizarUsuarioSchema = datosUsuarioSchema.partial()
 
 // Esquema para validar los query params del GET /usuarios
 export const ConsultarUsuariosSchema = z.object({
@@ -20,4 +39,9 @@ export const ConsultarUsuariosSchema = z.object({
   email: z.string().optional(),
   sortBy: z.enum(['createdAt', 'nombre', 'apellido']).optional().default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc')
+})
+
+export const iniciarSesionSchema = z.object({
+  email: z.string().email("Formato de email inválido").toLowerCase(),
+  contrasena: z.string().min(1, "La contraseña es requerida")
 })

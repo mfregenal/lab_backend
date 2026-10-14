@@ -1,13 +1,19 @@
 import { z } from 'zod';
 
 export const crearArtesanoSchema = z.object({
-    usuarioID: z.number({ required_error: 'El ID de usuario es obligatorio' }).int().positive(),
-    postulacionID: z.number({ required_error: 'El ID de postulación es obligatorio' }).int().positive(),
-    rubroID: z.number({ required_error: 'El ID de rubro es obligatorio' }).int().positive()
+    usuarioId: z.number({ required_error: 'El ID de usuario es obligatorio' }).int().positive(),
+    postulacionId: z.number({ required_error: 'El ID de postulación es obligatorio' }).int().positive(),
+    standId: z.number().int().positive().optional() 
 });
 
 export const consultarArtesanosSchema = z.object({
+    nombre: z.string().optional(),
+    apellido: z.string().optional(),
     rubro: z.string().optional(),
-    producto: z.string().optional(),
-    stand: z.string().optional()
+    provincia: z.string().optional(),
+    localidad: z.string().optional(),
+    stand: z.string().optional(),
+    
+    pagina: z.coerce.number().int().positive().optional().default(1),
+    limite: z.coerce.number().int().positive().optional().default(10)
 });
