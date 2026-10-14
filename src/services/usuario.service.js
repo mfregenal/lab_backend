@@ -1,9 +1,12 @@
 import prisma from '../config/prisma.js'
 import { crearError } from '../utils/errores.js'
+import bcrypt from 'bcrypt'
 
 const SELECT_PUBLIC_USER = {
   id_usuario: true, nombre: true, apellido: true, email: true, rol: true, std_usuario: true, createdAt: true, updatedAt: true
 }
+
+const FACTOR_COSTO=10
 
 export const obtenerTodos = async (query) => {
   const { page, limit, nombre, email, sortBy, sortOrder } = query
@@ -64,7 +67,10 @@ export const crear = async (datos) => {
         throw crearError(`El rubro con ID ${postulacion.rubroId} no existe`, 404)
       }
     }
-
+    
+    const contrasenaHash = await bcrypt.hash(datosUsuario.contrasena, FACTOR_COSTO)
+    datosUsuario.contrasena = contrasenaHash
+    
     const usuario = await tx.usuario.create({
       data: { ...datosUsuario, rol },
       select: SELECT_PUBLIC_USER
@@ -107,4 +113,20 @@ export const eliminar = async (id) => {
     if (error.code === 'P2025') throw crearError('Usuario no encontrado', 404)
     throw error
   }
+}
+
+export const iniciarSesion = async (datos) => {
+  const usuario = await prisma.usuario.findUnique({where: { email: datos.email}})
+
+  if (!usuario) throw crearError('Email o contraseña incorrectos', 401)
+
+  const contrasenaValida = await bcrypt.compare( datos.contrasena, usuario.contrasena )
+
+  if (!contrasenaValida) {
+    throw crearError('Email o contraseña incorrectos', 401)
+  }
+
+  delete usuario.contrasena // Eliminamos la contraseña antes de devolver el usuario
+
+  return usuario
 }
