@@ -50,13 +50,36 @@ export const obtenerPorId = async (id) => {
 }
 
 export const crear = async (datos) => {
-  // Verificar si el email existe consultando la BD
-  const existe = await prisma.usuario.findUnique({ where: { email: datos.email } })
-  if (existe) throw crearError('El email ya se encuentra en uso', 409)
+  const { postulacion, ...datosUsuario } = datos
+  const rol = datosUsuario.rol ?? 'ARTESANO'
 
-  return await prisma.usuario.create({
-    data: datos,
-    select: SELECT_PUBLIC_USER
+  return prisma.$transaction(async (tx) => {
+    if (postulacion) {
+      const rubroExiste = await tx.rubro.findUnique({
+        where: { id_rubro: postulacion.rubroId },
+        select: { id_rubro: true }
+      })
+
+      if (!rubroExiste) {
+        throw crearError(`El rubro con ID ${postulacion.rubroId} no existe`, 404)
+      }
+    }
+
+    const usuario = await tx.usuario.create({
+      data: { ...datosUsuario, rol },
+      select: SELECT_PUBLIC_USER
+    })
+
+    if (!postulacion) return { ...usuario, postulacion: null }
+
+    const postulacionCreada = await tx.postulacion.create({
+      data: {
+        ...postulacion,
+        usuarioId: usuario.id_usuario
+      }
+    })
+
+    return { ...usuario, postulacion: postulacionCreada }
   })
 }
 
