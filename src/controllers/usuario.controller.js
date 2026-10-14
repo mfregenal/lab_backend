@@ -1,4 +1,6 @@
 import * as UsuarioService from '../services/usuario.service.js'
+import { generarToken } from '../services/tokens.service.js';
+import { revocarToken } from '../services/revocaciones.service.js';
 
 export const obtenerUsuarios = async (req, res, next) => {
   try {
@@ -38,6 +40,36 @@ export const eliminarUsuario = async (req, res, next) => {
 export const iniciarSesion = async (req, res, next) => {
   try {
     const usuario = await UsuarioService.iniciarSesion(req.iniciarSesionDTO)
-    res.status(200).json(usuario)
+
+    const token = generarToken(usuario);
+    
+    res.status(200).json({ 
+            mensaje: "Inicio de sesión exitoso",
+            token, 
+            usuario 
+        });
   } catch (error) { next(error) }
 }
+
+export const obtenerMiPerfil = async (req, res, next) => {
+    try {
+        const usuario = await UsuarioService.obtenerPorId(req.usuario.id);
+        
+        res.status(200).json(usuario);
+    } catch (error) {
+        if (error.statusCode === 404) {
+            res.set("WWW-Authenticate", 'Bearer error="invalid_token"');
+            return res.status(401).json({ mensaje: "La cuenta asociada al token no existe." });
+        }
+        next(error);
+    }
+};
+
+export const cerrarSesion = async (req, res, next) => {
+    try {
+        await revocarToken(req.usuario);
+        return res.status(204).end(); // 204 significa éxito, pero sin cuerpo en la respuesta
+    } catch (error) {
+        next(error);
+    }
+};

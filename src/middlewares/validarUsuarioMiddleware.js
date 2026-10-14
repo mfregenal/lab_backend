@@ -6,6 +6,7 @@ export const validarCreacionUsuario = (req, res, next) => {
 
   if (!resultado.success) {
     const detalles = detallarErroresZod(resultado.error)
+    console.log("ERRORES DE ZOD:", detalles)
     return next(crearError('Datos de usuario invalidos', 400, detalles))
   }
 
