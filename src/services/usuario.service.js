@@ -9,19 +9,20 @@ const SELECT_PUBLIC_USER = {
 const FACTOR_COSTO=10
 
 export const obtenerTodos = async (query) => {
-  const { page, limit, nombre, email, sortBy, sortOrder } = query
+  const { pagina, limite, nombre, email, rol, ordenPor, direccion } = query
 
   const where = {}
   if (nombre) where.nombre = { contains: nombre, mode: 'insensitive' }
   if (email) where.email = { contains: email, mode: 'insensitive' }
+  if (rol) where.rol = rol
 
   const [usuarios, total] = await prisma.$transaction([
     prisma.usuario.findMany({
       where,
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (pagina - 1) * limite,
+      take: limite,
       orderBy: [
-        { [sortBy]: sortOrder },
+        { [ordenPor]: direccion },
         { id_usuario: 'desc' } // Desempate por ID
       ],
       select: SELECT_PUBLIC_USER
@@ -34,9 +35,9 @@ export const obtenerTodos = async (query) => {
     data: usuarios,
     meta: {
       total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
+      pagina,
+      limite,
+      totalPaginas: Math.ceil(total / limite)
     }
   }
 }
