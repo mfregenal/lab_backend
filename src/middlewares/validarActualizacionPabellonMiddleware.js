@@ -1,4 +1,4 @@
-import { actualizarPabellonSchema } from "../schemas/pabellon.schema.js";
+import { actualizarPabellonSchema } from "../validators/pabellon.schema.js";
 
 export const validarPabellonActualizacion = (req, res, next) => {
   const resultado = actualizarPabellonSchema.safeParse(req.body);

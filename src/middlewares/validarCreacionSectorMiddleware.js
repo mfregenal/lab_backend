@@ -1,4 +1,4 @@
-import { crearSectorSchema } from "../schemas/sector.schema.js";
+import { crearSectorSchema } from "../validators/sector.schema.js";
 
 export const validarSectorCreacion = (req, res, next) => {
   const resultado = crearSectorSchema.safeParse(req.body);
