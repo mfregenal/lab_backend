@@ -1,6 +1,6 @@
 import {
     crearPabellonSchema
-} from "../validators/pabellone.schema.js";
+} from "../validators/pabellon.schema.js";
 
 export const validarPabellonCreacion = (req, res, next) => {
     const resultado = crearPabellonSchema.safeParse(
