@@ -6,7 +6,7 @@ const datosUsuarioSchema = z.object({
   apellido: z.string().min(2, "El apellido debe tener al menos 2 letras").max(50),
   email: z.string().email("Formato de email inválido").toLowerCase(),
   contrasena: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
-  rol: z.enum(['ARTESANO', 'ADMINISTRADOR']).optional().default('ARTESANO')
+  // rol: z.enum(['ARTESANO', 'ADMINISTRADOR']).optional().default('ARTESANO')
 })
 
 export const crearUsuarioSchema = datosUsuarioSchema.extend({

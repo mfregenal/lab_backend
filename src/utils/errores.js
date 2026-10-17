@@ -10,6 +10,6 @@ export const crearError = (mensaje, status, detalles) => {
 
 export const detallarErroresZod = (errorZod) =>
   errorZod.issues.map((issues) => ({
-    campo: issues.patch.join('.') || null,
+    campo: issues.path?.join('.') || 'body',
     mensaje: issues.message
   }))
