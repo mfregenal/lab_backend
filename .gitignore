@@ -3,6 +3,9 @@ node_modules/
 
 # Variables de entorno y secretos
 .env
+.env.*
+!.env.example
+
 /src/generated/prisma
 /prisma/migrations
 

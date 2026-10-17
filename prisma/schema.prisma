@@ -36,7 +36,7 @@ model Usuario {
   nombre          String
   apellido        String
   email           String      @unique
-  contrasena      String
+  passwordHash    String
   rol             Rol         @default(ARTESANO)
   std_usuario     Boolean?    @default(true)
   createdAt       DateTime    @default(now())
@@ -145,4 +145,12 @@ model Consulta {
   query           Json?
   params          Json?
   createAt        DateTime    @default(now())
+}
+
+model TokenRevocado {
+  jti             String      @id
+  venceEn         DateTime
+
+  @@index([venceEn])
+
 }

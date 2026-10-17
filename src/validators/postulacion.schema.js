@@ -71,8 +71,6 @@ export const evaluarPostulacionSchema = z.object({
 export const datosPostulacionUsuarioSchema = datosPostulacionSchema.superRefine(validarLocalidad);
 
 
-
-
 export const consultarPostulacionesSchema = z.object({
     estado: z.enum(['PENDIENTE', 'EN_REVISION', 'REVISION_REQUERIDA', 'APROBADA', 'RECHAZADA']).optional(),
     nombre: z.string().optional(),

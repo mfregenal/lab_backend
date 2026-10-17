@@ -1,4 +1,7 @@
 import express from 'express'
+import "./config/jwt.js";
+import { iniciarLimpiezaRevocaciones } from "./tareas/limpiezaRevocaciones.js";
+
 import artesanoRoutes from './routes/artesano.routes.js'
 import productosRoutes from './routes/producto.routes.js'
 import usuarioRoutes from './routes/usuario.routes.js'
@@ -12,6 +15,7 @@ import ubicacionesRoutes from './routes/ubicacion.routes.js';
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { errorMiddleware } from './middlewares/errorMiddleware.js'
 import { loggerConsultas } from './middlewares/loggerConsultasMiddleware.js'
+
 
 const app = express()
 
@@ -41,4 +45,5 @@ app.use( errorMiddleware ) // Middleware para manejar errores
 
 app.listen( PORT, () => {
   console.log( `Servidor escuchando en el puerto http://localhost:${PORT}` )
+  iniciarLimpiezaRevocaciones();
 } )
