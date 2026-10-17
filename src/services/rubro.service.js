@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js'
 import { crearError } from '../utils/errores.js'
 
 export const obtenerTodos = async (query) => {
-  const { page, limit, nom_rubro, desc_rubro, sortBy, sortOrder } = query
+  const { pagina, limite, nom_rubro, desc_rubro, ordenPor, direccion } = query
 
   const where = {}
   if (nom_rubro) where.nom_rubro = { contains: nom_rubro, mode: 'insensitive' }
@@ -11,10 +11,10 @@ export const obtenerTodos = async (query) => {
   const [rubros, total] = await prisma.$transaction([
     prisma.rubro.findMany({
       where,
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (pagina - 1) * limite,
+      take: limite,
       orderBy: [
-        { [sortBy]: sortOrder },
+        { [ordenPor]: direccion },
         { id_rubro: 'desc' } // Desempate por id
       ]
     }),
@@ -25,9 +25,9 @@ export const obtenerTodos = async (query) => {
     data: rubros,
     meta: {
       total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
+      pagina,
+      limite,
+      totalPaginas: Math.ceil(total / limite)
     }
   }
 }
