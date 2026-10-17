@@ -33,12 +33,13 @@ export const actualizarUsuarioSchema = datosUsuarioSchema.partial()
 
 // Esquema para validar los query params del GET /usuarios
 export const ConsultarUsuariosSchema = z.object({
-  page: z.coerce.number().int().min(1, "La página debe ser mayor a 0").optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100, "Máximo 100 por página").optional().default(10),
+  pagina: z.coerce.number().int().min(1, "La página debe ser mayor a 0").optional().default(1),
+  limite: z.coerce.number().int().min(1).max(100, "Máximo 100 por página").optional().default(10),
   nombre: z.string().optional(),
   email: z.string().optional(),
-  sortBy: z.enum(['createdAt', 'nombre', 'apellido']).optional().default('createdAt'),
-  sortOrder: z.enum(['asc', 'desc']).optional().default('desc')
+  rol: z.enum(['ARTESANO', 'ADMINISTRADOR']).optional(),
+  ordenPor: z.enum(['createdAt', 'nombre', 'apellido']).optional().default('createdAt'),
+  direccion: z.enum(['asc', 'desc']).optional().default('desc')
 })
 
 export const iniciarSesionSchema = z.object({

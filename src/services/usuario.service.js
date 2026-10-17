@@ -16,35 +16,37 @@ const SELECT_PUBLIC_USER = {
 const FACTOR_COSTO = 10
 
 export const obtenerTodos = async (query) => {
-    const { page, limit, nombre, email, sortBy, sortOrder } = query
+  const { pagina, limite, nombre, email, rol, ordenPor, direccion } = query
 
-    const where = {}
-    if (nombre) where.nombre = { contains: nombre, mode: 'insensitive' }
-    if (email) where.email = { contains: email, mode: 'insensitive' }
+  const where = {}
+  if (nombre) where.nombre = { contains: nombre, mode: 'insensitive' }
+  if (email) where.email = { contains: email, mode: 'insensitive' }
+  if (rol) where.rol = rol
 
-    const [usuarios, total] = await prisma.$transaction([
-        prisma.usuario.findMany({
-            where,
-            skip: (page - 1) * limit,
-            take: limit,
-            orderBy: [
-                { [sortBy]: sortOrder },
-                { id_usuario: 'desc' } 
-            ],
-            select: SELECT_PUBLIC_USER
-        }),
-        prisma.usuario.count({ where })
-    ])
+  const [usuarios, total] = await prisma.$transaction([
+    prisma.usuario.findMany({
+      where,
+      skip: (pagina - 1) * limite,
+      take: limite,
+      orderBy: [
+        { [ordenPor]: direccion },
+        { id_usuario: 'desc' } // Desempate por ID
+      ],
+      select: SELECT_PUBLIC_USER
+    }),
+    prisma.usuario.count({ where })
+  ])
 
-    return {
-        data: usuarios,
-        meta: {
-            total,
-            page,
-            limit,
-            totalPages: Math.ceil(total / limit)
-        }
+
+  return {
+    data: usuarios,
+    meta: {
+      total,
+      pagina,
+      limite,
+      totalPaginas: Math.ceil(total / limite)
     }
+  }
 }
 
 export const obtenerPorId = async (id) => {
