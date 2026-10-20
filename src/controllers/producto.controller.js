@@ -1,15 +1,10 @@
 import { crearError } from '../utils/errores.js';
-import { 
-    obtenerProductosService, 
-    crearProductoService,
-    obtenerProductoIdService,
-    actualizarProductoService,
-    eliminarProductoService
+import {obtenerProductosService, crearProductoService, obtenerProductoIdService, actualizarProductoService, eliminarProductoService
 } from '../services/producto.service.js';
 
 export const obtenerProductos = async (req, res, next) => {
     try {
-        const filtrosDTO = req.query;
+        const filtrosDTO = req.queryValido;
         const respuesta = await obtenerProductosService(filtrosDTO);
         res.json(respuesta);
     } catch (error) {
@@ -58,9 +53,9 @@ export const actualizarProducto = async (req, res, next) => {
 
 export const eliminarProducto = async (req, res, next) => {
     try {
-        const id = req.id; // Asumiendo que usas tu middleware validarIdMiddleware
+        const id = req.id; 
         await eliminarProductoService(id);
-        res.status(204).send();
+        res.status(200).json({ mensaje: "Producto eliminado correctamente" });
     } catch (error) {
         console.error(error);
         if (error.statusCode) return next(error);

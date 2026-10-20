@@ -2,26 +2,26 @@ import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
 
 
-export const crearPostulacionService = async (dataDTO) => {
-    const rubroExiste = await prisma.rubro.findUnique({
-        where: { id_rubro: dataDTO.rubroId }
-    });
+// export const crearPostulacionService = async (dataDTO) => {
+//     const rubroExiste = await prisma.rubro.findUnique({
+//         where: { id_rubro: dataDTO.rubroId }
+//     });
 
 
-    if (!rubroExiste) {
-        throw crearError(`El rubro con ID ${dataDTO.rubroId} no existe.`, 404);
-    }
+//     if (!rubroExiste) {
+//         throw crearError(`El rubro con ID ${dataDTO.rubroId} no existe.`, 404);
+//     }
 
 
-    try {
-        return await prisma.postulacion.create({ data: dataDTO });
-    } catch (error) {
-        if (error.code === 'P2002') {
-            throw crearError('Ya existe otra postulación registrada con ese DNI', 409);
-        }
-        throw error;
-    }
-};
+//     try {
+//         return await prisma.postulacion.create({ data: dataDTO });
+//     } catch (error) {
+//         if (error.code === 'P2002') {
+//             throw crearError('Ya existe otra postulación registrada con ese DNI', 409);
+//         }
+//         throw error;
+//     }
+// };
 
 
 export const obtenerPostulacionesService = async (filtrosDTO) => {
