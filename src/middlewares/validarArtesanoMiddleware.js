@@ -24,6 +24,6 @@ export const validarConsultaArtesanos = (req, res, next) => {
         });
     }
 
-    Object.assign(req.query, resultado.data);
+    req.queryValido = resultado.data;
     return next();
 };

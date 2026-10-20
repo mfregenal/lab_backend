@@ -3,7 +3,7 @@ import { obtenerArtesanosService, crearArtesanoService, obtenerArtesanoIdService
 
 export const obtenerArtesanos = async (req, res, next) => {
     try {
-        const filtrosDTO = req.query;
+        const filtrosDTO = req.queryValido; 
         const respuesta = await obtenerArtesanosService(filtrosDTO);
         res.json(respuesta);
     } catch (error) {
@@ -54,7 +54,7 @@ export const eliminarArtesano = async (req, res, next) => {
     try {
         const id = req.id; 
         await eliminarArtesanoService(id);
-        res.status(204).send();
+         res.status(200).json({ mensaje: "Artesano eliminado correctamente" });
     } catch (error) {
         console.error(error);
         if (error.statusCode) return next(error);

@@ -99,8 +99,8 @@ export const actualizarArtesanoService = async (id, dataDTO) => {
         const artesanoActualizado = await prisma.artesano.update({
             where: { id_artesano: id },
             data: {
-                standId: standId ? Number(standId) : undefined, 
-                // Actualizamos los datos heredados en la postulación
+                stand: standId ? { connect: { id_stand: Number(standId) } } : undefined, 
+                
                 postulacion: {
                     update: { nom_emprend, trayectoria, localidad }
                 }

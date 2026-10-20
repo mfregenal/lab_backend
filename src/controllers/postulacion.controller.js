@@ -1,5 +1,5 @@
 import { crearError } from '../utils/errores.js';
-import { crearPostulacionService, obtenerPostulacionesService, obtenerPostulacionIdService, actualizarPostulacionService, eliminarPostulacionService } from '../services/postulacion.service.js';
+import { /*crearPostulacionService*/ obtenerPostulacionesService, obtenerPostulacionIdService, actualizarPostulacionService, eliminarPostulacionService } from '../services/postulacion.service.js';
 
 
 export const obtenerPostulaciones = async (req, res, next) => {
@@ -27,17 +27,17 @@ export const obtenerPostulacionId = async (req, res, next) => {
 };
 
 
-export const crearPostulacion = async (req, res, next) => {
-    try {
-        const postulacionDTO = req.body;
-        const nuevaPostulacion = await crearPostulacionService(postulacionDTO);
-        res.status(201).json(nuevaPostulacion);
-    } catch (error) {
-        console.error(error);
-        if (error.status || error.statusCode) return next(error);
-        next(crearError('Error interno al crear la postulación', 500));
-    }
-};
+// export const crearPostulacion = async (req, res, next) => {
+//     try {
+//         const postulacionDTO = req.body;
+//         const nuevaPostulacion = await crearPostulacionService(postulacionDTO);
+//         res.status(201).json(nuevaPostulacion);
+//     } catch (error) {
+//         console.error(error);
+//         if (error.status || error.statusCode) return next(error);
+//         next(crearError('Error interno al crear la postulación', 500));
+//     }
+// };
 
 
 export const actualizarPostulacion = async (req, res, next) => {
@@ -60,7 +60,7 @@ export const eliminarPostulacion = async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
         await eliminarPostulacionService(id);
-        res.status(204).send();
+        res.status(200).json({ mensaje: "Postulación borrada correctamente" });
     } catch (error) {
         console.error(error);
         if (error.status || error.statusCode) return next(error);
