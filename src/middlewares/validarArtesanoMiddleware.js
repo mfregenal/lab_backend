@@ -1,4 +1,4 @@
-import { crearArtesanoSchema, consultarArtesanosSchema } from '../validators/artesano.schema.js';
+import { crearArtesanoSchema, consultarArtesanosSchema, asignarStandSchema } from '../validators/artesano.schema.js';
 
 export const validarCreacionArtesano = (req, res, next) => {
     const resultado = crearArtesanoSchema.safeParse(req.body);
@@ -25,5 +25,12 @@ export const validarConsultaArtesanos = (req, res, next) => {
     }
 
     req.queryValido = resultado.data;
+    return next();
+};
+
+export const validarAsignacionStand = (req, res, next) => {
+    const resultado = asignarStandSchema.safeParse(req.body);
+    if (!resultado.success) return res.status(400).json({ mensaje: 'Debe indicar un stand válido.', errores: resultado.error.issues });
+    req.body = resultado.data;
     return next();
 };

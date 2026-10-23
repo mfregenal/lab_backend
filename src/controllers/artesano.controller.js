@@ -1,5 +1,12 @@
 import { crearError } from '../utils/errores.js';
-import { obtenerArtesanosService, crearArtesanoService, obtenerArtesanoIdService, actualizarArtesanoService, eliminarArtesanoService } from '../services/artesano.service.js';
+import {
+    obtenerArtesanosService,
+    crearArtesanoService,
+    obtenerArtesanoIdService,
+    actualizarArtesanoService,
+    asignarStandService,
+    eliminarArtesanoService
+} from '../services/artesano.service.js';
 
 export const obtenerArtesanos = async (req, res, next) => {
     try {
@@ -51,11 +58,18 @@ export const actualizarArtesano = async (req, res, next) => {
     }
 };
 
+export const asignarStand = async (req, res, next) => {
+    try {
+        const resultado = await asignarStandService(req.id, req.body.standId);
+        res.json(resultado);
+    } catch (error) { next(error); }
+};
+
 export const eliminarArtesano = async (req, res, next) => {
     try {
         const id = req.id; 
         await eliminarArtesanoService(id);
-         res.status(200).json({ mensaje: "Artesano eliminado correctamente" });
+        res.status(200).json({ mensaje: "Artesano eliminado correctamente" });
     } catch (error) {
         console.error(error);
         if (error.status || error.statusCode) return next(error);
