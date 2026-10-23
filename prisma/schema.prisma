@@ -38,7 +38,7 @@ model Usuario {
   email           String      @unique
   passwordHash    String
   rol             Rol         @default(ARTESANO)
-  std_usuario     Boolean?    @default(true)
+  std_usuario     Boolean    @default(true)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 

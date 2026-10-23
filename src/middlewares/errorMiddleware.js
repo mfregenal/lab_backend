@@ -12,5 +12,5 @@ export const errorMiddleware = (err, req, res, next) => {
     return res.status(status).json({ error: "Error interno del servidor" })
   }
 
-  res.status(status).json({ error: err.message || "Ocurrio un error inesperado" })
+  res.status(status).json({ error: err.message || "Ocurrio un error inesperado", detalles: err.detalles || {} })
 }

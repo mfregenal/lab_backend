@@ -33,3 +33,7 @@ export const consultarArtesanosSchema = z.object({
         .min(1, 'El límite debe ser al menos 1')
         .max(100, 'Máximo 100 resultados por página').optional().default(10)
 });
+
+export const asignarStandSchema = z.object({
+    standId: z.coerce.number().int().positive()
+}).strict();
