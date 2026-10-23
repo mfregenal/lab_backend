@@ -14,6 +14,8 @@ export const crearUsuarioSchema = datosUsuarioSchema.extend({
   postulacion: datosPostulacionUsuarioSchema
 }).strict()
 
+export const crearAdministradorSchema = datosUsuarioSchema.strict()
+
 export const actualizarUsuarioSchema = datosUsuarioSchema.partial().strict()
 
 export const actualizarEstadoUsuarioSchema = z.object({

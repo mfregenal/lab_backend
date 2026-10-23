@@ -23,6 +23,13 @@ export const crearUsuario = async (req, res, next) => {
   } catch (error) { next(error) }
 }
 
+export const crearAdministrador = async (req, res, next) => {
+  try {
+    const nuevoUsuario = await UsuarioService.crear(req.body, 'ADMINISTRADOR')
+    res.status(201).json(nuevoUsuario)
+  } catch (error) { next(error) }
+}
+
 export const actualizarUsuario = async (req, res, next) => {
   try {
     const usuarioActualizado = await UsuarioService.actualizar(req.id, req.body, req.usuario)

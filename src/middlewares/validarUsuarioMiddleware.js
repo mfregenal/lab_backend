@@ -1,6 +1,7 @@
 import { crearError, detallarErroresZod } from "../utils/errores.js"
 import {
   crearUsuarioSchema,
+  crearAdministradorSchema,
   consultarUsuariosSchema,
   actualizarUsuarioSchema,
   actualizarEstadoUsuarioSchema,
@@ -17,6 +18,18 @@ export const validarCreacionUsuario = (req, res, next) => {
   }
 
   req.body = resultado.data // Inyecta los datos transformados por Zod
+  next()
+}
+
+export const validarCreacionAdministrador = (req, res, next) => {
+  const resultado = crearAdministradorSchema.safeParse(req.body)
+
+  if (!resultado.success) {
+    const detalles = detallarErroresZod(resultado.error)
+    return next(crearError('Datos de administrador inválidos', 400, detalles))
+  }
+
+  req.body = resultado.data
   next()
 }
 
