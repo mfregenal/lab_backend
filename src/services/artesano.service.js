@@ -76,29 +76,6 @@ export const obtenerArtesanoIdService = async (id, usuario) => {
     return artesano;
 };
 
-export const crearArtesanoService = async (dataDTO) => {
-    const usuarioExiste = await prisma.usuario.findUnique({
-        where: { id_usuario: dataDTO.usuarioId },
-        select: { id_usuario: true, rol: true }
-    });
-    if (!usuarioExiste) {
-        throw crearError(`El usuario con ID ${dataDTO.usuarioId} no existe.`, 404);
-    }
-    if (usuarioExiste.rol !== 'ARTESANO') {
-        throw crearError('Solo los usuarios con rol ARTESANO pueden tener un perfil de artesano', 409);
-    }
-
-    const postulacionExiste = await prisma.postulacion.findUnique({
-        where: { id_postulacion: dataDTO.postulacionId }
-    });
-    if (!postulacionExiste) {
-        throw crearError(`La postulación con ID ${dataDTO.postulacionId} no existe.`, 404);
-    }
-
-    const nuevoArtesano = await prisma.artesano.create({ data: dataDTO });
-    return nuevoArtesano;
-};
-
 export const asignarStandService = async (id, standId) => {
     try {
         return await prisma.$transaction(async (tx) => {
