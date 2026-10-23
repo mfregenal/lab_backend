@@ -1,7 +1,6 @@
 import { crearError } from '../utils/errores.js';
 import {
     obtenerArtesanosService,
-    crearArtesanoService,
     obtenerArtesanoIdService,
     actualizarArtesanoService,
     asignarStandService,
@@ -29,18 +28,6 @@ export const obtenerArtesanoId = async (req, res, next) => {
         console.error(error);
         if (error.status || error.statusCode) return next(error);
         next(crearError('Error al buscar el artesano', 500));
-    }
-};
-
-export const crearArtesano = async (req, res, next) => {
-    try {
-        const artesanoDTO = req.body;
-        const nuevoArtesano = await crearArtesanoService(artesanoDTO);
-        res.status(201).json(nuevoArtesano);
-    } catch (error) {
-        console.error(error);
-        if (error.status || error.statusCode) return next(error);
-        next(crearError('Error interno al crear el artesano', 500));
     }
 };
 

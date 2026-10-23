@@ -1,7 +1,6 @@
 import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
 
-
 export const obtenerPostulacionesService = async (filtrosDTO, usuario) => {
     const { estado, nombre, dni, provincia, localidad, pagina, limite} = filtrosDTO;
 
@@ -103,15 +102,29 @@ export const actualizarPostulacionService = async (id, dataDTO, usuario) => {
                 return actualizada;
             }
 
+            const estado = dataDTO.std_postulacion;
+            if (estado === undefined) {
+                return tx.postulacion.update({
+                    where: { id_postulacion: id },
+                    data: dataDTO
+                });
+            }
+            if (postulacion.artesano && estado !== 'APROBADA') {
+                throw crearError('Una postulación aprobada no puede volver a un estado anterior', 409);
+            }
+            if (estado === 'APROBADA' && !postulacion.artesano) {
+                await tx.artesano.create({
+                    data: { usuarioId: postulacion.usuarioId, postulacionId: id }
+                });
+            }
+
             return tx.postulacion.update({
                 where: { id_postulacion: id },
-                data: dataDTO.std_postulacion !== undefined
-                    ? {
-                        std_postulacion: dataDTO.std_postulacion,
-                        observacion: dataDTO.observacion,
-                        adminId: usuario.id
-                    }
-                    : dataDTO,
+                data: {
+                    std_postulacion: estado,
+                    observacion: dataDTO.observacion,
+                    adminId: usuario.id
+                },
                 include: { artesano: true }
             });
         });

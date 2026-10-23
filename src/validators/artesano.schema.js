@@ -1,21 +1,5 @@
 import { z } from 'zod';
 
-export const crearArtesanoSchema = z.object({
-    usuarioId: z.number({ 
-        required_error: 'El ID de usuario es obligatorio',
-        invalid_type_error: 'El ID de usuario debe ser un número'
-    }).int('El ID de usuario debe ser un número entero').positive('El ID de usuario debe ser positivo'),
-    
-    postulacionId: z.number({ 
-        required_error: 'El ID de postulación es obligatorio',
-        invalid_type_error: 'El ID de postulación debe ser un número'
-    }).int('El ID de postulación debe ser un número entero').positive('El ID de postulación debe ser positivo'),
-    
-    standId: z.number({ 
-        invalid_type_error: 'El ID del stand debe ser un número' 
-    }).int('El ID del stand debe ser un número entero').positive('El ID del stand debe ser positivo').optional() 
-});
-
 export const consultarArtesanosSchema = z.object({
     nombre: z.string({ invalid_type_error: 'El nombre debe ser texto' }).optional(),
     apellido: z.string({ invalid_type_error: 'El apellido debe ser texto' }).optional(),
