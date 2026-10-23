@@ -99,9 +99,47 @@ export const crearArtesanoService = async (dataDTO) => {
     return nuevoArtesano;
 };
 
+export const asignarStandService = async (id, standId) => {
+    try {
+        return await prisma.$transaction(async (tx) => {
+            const artesano = await tx.artesano.findUnique({ where: { id_artesano: id } });
+            if (!artesano) throw crearError(`No existe un artesano con id ${id}`, 404);
+
+            const stand = await tx.stand.findUnique({ where: { id_stand: standId }, include: { artesano: true } });
+            if (!stand) throw crearError(`No existe un stand con id ${standId}`, 404);
+
+            const yaAsignadoAlArtesano = stand.std_stand === 'OCUPADO' && stand.artesano?.id_artesano === id;
+            if (stand.std_stand !== 'DISPONIBLE' && !yaAsignadoAlArtesano) {
+                throw crearError('El stand no está disponible', 409);
+            }
+
+            if (artesano.standId && artesano.standId !== standId) {
+                await tx.stand.update({ where: { id_stand: artesano.standId }, data: { std_stand: 'DISPONIBLE' } });
+            }
+
+            await tx.stand.update({ where: { id_stand: standId }, data: { std_stand: 'OCUPADO' } });
+
+            return tx.artesano.update({
+                where: { id_artesano: id },
+                data: { standId },
+                include: { stand: { include: { sector: { include: { pabellon: true } } } } }
+            });
+        }, { isolationLevel: 'Serializable' });
+    } catch (error) {
+        if (error.code === 'P2034') {
+            throw crearError('El stand o el artesano fue modificado por otra operación. Intente nuevamente.', 409);
+        }
+        throw error;
+    }
+};
+
 export const actualizarArtesanoService = async (id, dataDTO, usuario) => {
     try {
         const { nom_emprend, trayectoria, localidad, standId } = dataDTO;
+
+        if (standId !== undefined) {
+            throw crearError('La asignación de stands debe realizarse mediante el endpoint de asignación.', 400);
+        }
 
         if (usuario.rol === 'ARTESANO') {
             const artesano = await prisma.artesano.findUnique({
@@ -112,16 +150,11 @@ export const actualizarArtesanoService = async (id, dataDTO, usuario) => {
             if (!artesano || artesano.usuarioId !== usuario.id) {
                 throw crearError(`No existe un artesano con id ${id}`, 404);
             }
-            if (standId !== undefined) {
-                throw crearError('Solo un administrador puede asignar un stand', 403);
-            }
         }
 
         const artesanoActualizado = await prisma.artesano.update({
             where: { id_artesano: id },
             data: {
-                stand: standId ? { connect: { id_stand: Number(standId) } } : undefined, 
-                
                 postulacion: {
                     update: { nom_emprend, trayectoria, localidad }
                 }
