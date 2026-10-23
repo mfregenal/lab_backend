@@ -3,6 +3,7 @@ import {
   obtenerUsuarios,
   obtenerUsuarioPorId,
   crearUsuario,
+  crearAdministrador,
   actualizarUsuario,
   actualizarEstadoUsuario,
   eliminarUsuario,
@@ -12,6 +13,7 @@ import {
 import { validarId } from '../middlewares/validarIdMiddleware.js'
 import {
   validarCreacionUsuario,
+  validarCreacionAdministrador,
   validarConsultaUsuario,
   validarActualizacionUsuario,
   validarActualizacionEstadoUsuario,
@@ -25,6 +27,7 @@ const router = express.Router()
 router.get('/', autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarConsultaUsuario, obtenerUsuarios )
 router.post( '/', validarCreacionUsuario, crearUsuario )
 router.post( '/login', validarInicioSesion, iniciarSesion )
+router.post('/registro-administrador', autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarCreacionAdministrador, crearAdministrador)
 
 router.get('/me', autenticarUsuario, obtenerMiPerfil);
 router.post('/logout', autenticarUsuario, cerrarSesion);
