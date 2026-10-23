@@ -6,33 +6,24 @@ const datosUsuarioSchema = z.object({
   apellido: z.string().min(2, "El apellido debe tener al menos 2 letras").max(50),
   email: z.string().email("Formato de email inválido").toLowerCase(),
   contrasena: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
-  // rol: z.enum(['ARTESANO', 'ADMINISTRADOR']).optional().default('ARTESANO')
+  rol: z.enum(['ARTESANO', 'ADMINISTRADOR']).optional().default('ARTESANO')
 })
 
+/* ROLES */
 export const crearUsuarioSchema = datosUsuarioSchema.extend({
-  postulacion: datosPostulacionUsuarioSchema.optional()
-}).superRefine((datos, contexto) => {
-  if (datos.rol === 'ARTESANO' && !datos.postulacion) {
-    contexto.addIssue({
-      code: 'custom',
-      path: ['postulacion'],
-      message: 'Los datos de postulación son obligatorios para los artesanos'
-    })
-  }
+  postulacion: datosPostulacionUsuarioSchema
+}).strict()
 
-  if (datos.rol === 'ADMINISTRADOR' && datos.postulacion) {
-    contexto.addIssue({
-      code: 'custom',
-      path: ['postulacion'],
-      message: 'Los administradores no pueden tener una postulación'
-    })
-  }
-})
+export const actualizarUsuarioSchema = datosUsuarioSchema.partial().strict()
 
-export const actualizarUsuarioSchema = datosUsuarioSchema.partial()
+export const actualizarEstadoUsuarioSchema = z.object({
+  std_usuario: z.boolean()
+}).strict()
+
+/* TERMINA ROLES */
 
 // Esquema para validar los query params del GET /usuarios
-export const ConsultarUsuariosSchema = z.object({
+export const consultarUsuariosSchema = z.object({
   pagina: z.coerce.number().int().min(1, "La página debe ser mayor a 0").optional().default(1),
   limite: z.coerce.number().int().min(1).max(100, "Máximo 100 por página").optional().default(10),
   nombre: z.string().optional(),

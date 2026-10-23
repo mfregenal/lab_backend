@@ -12,7 +12,7 @@ export const generarToken = (usuario) => {
         secretoJWT,
         { 
             algorithm: "HS256", 
-            expiresIn: "15m"
+            expiresIn: "1h"
         }
     );
 };
@@ -23,7 +23,6 @@ export const verificarToken = (token) => {
         algorithms: ["HS256"]
     });
 
-  
     if (
         typeof payload !== "object" ||
         payload === null ||

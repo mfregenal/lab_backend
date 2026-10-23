@@ -3,13 +3,15 @@ import { obtenerStands, obtenerStandPorId, crearStand, actualizarStand, eliminar
 import { validarId } from "../middlewares/validarIdMiddleware.js";
 import { validarCreacionStand, validarConsultaStands, validarActualizacionStand } from "../middlewares/validarStandMiddleware.js";
 import { loggerConsultas } from '../middlewares/loggerConsultasMiddleware.js'
+import { autenticarUsuario } from '../middlewares/autenticacion.middleware.js';
+import { autorizarRoles } from '../middlewares/autorizacion.middleware.js';
 
 const router = Router ();
 
 router.get('/',loggerConsultas,validarConsultaStands,obtenerStands);
 router.get('/:id',validarId,obtenerStandPorId);
-router.post('/',validarCreacionStand,crearStand);
-router.put('/:id', validarId, validarActualizacionStand, actualizarStand);
-router.delete('/:id',validarId,eliminarStand);
+router.post('/',autenticarUsuario,autorizarRoles('ADMINISTRADOR'),validarCreacionStand,crearStand);
+router.put('/:id', autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarId, validarActualizacionStand, actualizarStand);
+router.delete('/:id',autenticarUsuario,autorizarRoles('ADMINISTRADOR'),validarId,eliminarStand);
 
 export default router;

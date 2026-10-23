@@ -1,5 +1,11 @@
 import { crearError, detallarErroresZod } from "../utils/errores.js"
-import { crearUsuarioSchema, ConsultarUsuariosSchema, actualizarUsuarioSchema, iniciarSesionSchema } from "../validators/usuario.schema.js"
+import {
+  crearUsuarioSchema,
+  consultarUsuariosSchema,
+  actualizarUsuarioSchema,
+  actualizarEstadoUsuarioSchema,
+  iniciarSesionSchema
+} from "../validators/usuario.schema.js"
 
 export const validarCreacionUsuario = (req, res, next) => {
   const resultado = crearUsuarioSchema.safeParse(req.body)
@@ -15,7 +21,7 @@ export const validarCreacionUsuario = (req, res, next) => {
 }
 
 export const validarConsultaUsuario = (req, res, next) => {
-  const resultado = ConsultarUsuariosSchema.safeParse(req.query)
+  const resultado = consultarUsuariosSchema.safeParse(req.query)
 
   if (!resultado.success) {
     const detalles = detallarErroresZod(resultado.error)
@@ -33,6 +39,18 @@ export const validarActualizacionUsuario = (req, res, next) => {
   if (!resultado.success) {
     const detalles = detallarErroresZod(resultado.error)
     return next(crearError('Datos de actualización inválidos', 400, detalles))
+  }
+
+  req.body = resultado.data
+  next()
+}
+
+export const validarActualizacionEstadoUsuario = (req, res, next) => {
+  const resultado = actualizarEstadoUsuarioSchema.safeParse(req.body)
+
+  if (!resultado.success) {
+    const detalles = detallarErroresZod(resultado.error)
+    return next(crearError('Datos de estado de usuario inválidos', 400, detalles))
   }
 
   req.body = resultado.data

@@ -12,24 +12,24 @@ import sectorRoutes from './routes/sector.routes.js'
 import standRoutes from './routes/stand.routes.js'
 import consultaRoutes from './routes/consulta.routes.js'
 import ubicacionesRoutes from './routes/ubicacion.routes.js';
+
 import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { errorMiddleware } from './middlewares/errorMiddleware.js'
-import { loggerConsultas } from './middlewares/loggerConsultasMiddleware.js'
 
 
 const app = express()
 
 app.use( express.json() )
 
-const PORT = 3000
+const PORT = Number(process.env.PORT) || 3000
 
 // Rutas de ambos módulos
 app.use('/artesanos', artesanoRoutes)
 app.use('/productos', productosRoutes)
-app.use( '/usuarios', usuarioRoutes )
-app.use( '/rubros', rubroRoutes )
-app.use( '/consultas', consultaRoutes )
-app.use( '/postulacion', postulacionRoutes )
+app.use('/usuarios', usuarioRoutes)
+app.use('/rubros', rubroRoutes)
+app.use('/consultas', consultaRoutes)
+app.use('/postulaciones', postulacionRoutes)
 app.use('/pabellones', pabellonRoutes)
 app.use('/sectores', sectorRoutes)
 app.use('/stands', standRoutes)

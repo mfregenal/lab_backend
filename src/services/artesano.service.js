@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
 
 export const obtenerArtesanosService = async (filtrosDTO) => {
-    const { nombre, apellido, rubro,provincia, localidad, stand, pagina, limite } = filtrosDTO;
+    const { nombre, apellido, rubro, provincia, localidad, stand, pagina, limite, ordenPor, direccion } = filtrosDTO;
 
     const condiciones = {};
 
@@ -57,7 +57,7 @@ export const obtenerArtesanosService = async (filtrosDTO) => {
     };
 };
 
-export const obtenerArtesanoIdService = async (id) => {
+export const obtenerArtesanoIdService = async (id, usuario) => {
     const artesano = await prisma.artesano.findUnique({
         where: { id_artesano: id },
         include: {
@@ -70,15 +70,22 @@ export const obtenerArtesanoIdService = async (id) => {
     if (!artesano) {
         throw crearError(`No existe un artesano con id ${id}`, 404);
     }
+    if (usuario.rol === 'ARTESANO' && artesano.usuarioId !== usuario.id) {
+        throw crearError(`No existe un artesano con id ${id}`, 404);
+    }
     return artesano;
 };
 
 export const crearArtesanoService = async (dataDTO) => {
     const usuarioExiste = await prisma.usuario.findUnique({
-        where: { id_usuario: dataDTO.usuarioId }
+        where: { id_usuario: dataDTO.usuarioId },
+        select: { id_usuario: true, rol: true }
     });
     if (!usuarioExiste) {
         throw crearError(`El usuario con ID ${dataDTO.usuarioId} no existe.`, 404);
+    }
+    if (usuarioExiste.rol !== 'ARTESANO') {
+        throw crearError('Solo los usuarios con rol ARTESANO pueden tener un perfil de artesano', 409);
     }
 
     const postulacionExiste = await prisma.postulacion.findUnique({
@@ -92,9 +99,23 @@ export const crearArtesanoService = async (dataDTO) => {
     return nuevoArtesano;
 };
 
-export const actualizarArtesanoService = async (id, dataDTO) => {
+export const actualizarArtesanoService = async (id, dataDTO, usuario) => {
     try {
         const { nom_emprend, trayectoria, localidad, standId } = dataDTO;
+
+        if (usuario.rol === 'ARTESANO') {
+            const artesano = await prisma.artesano.findUnique({
+                where: { id_artesano: id },
+                select: { usuarioId: true }
+            });
+
+            if (!artesano || artesano.usuarioId !== usuario.id) {
+                throw crearError(`No existe un artesano con id ${id}`, 404);
+            }
+            if (standId !== undefined) {
+                throw crearError('Solo un administrador puede asignar un stand', 403);
+            }
+        }
 
         const artesanoActualizado = await prisma.artesano.update({
             where: { id_artesano: id },
@@ -113,6 +134,7 @@ export const actualizarArtesanoService = async (id, dataDTO) => {
 
         return artesanoActualizado;
     } catch (error) {
+        if (error.status || error.statusCode) throw error
         if (error.code === 'P2025') {
             throw crearError(`No existe un artesano con id ${id}`, 404);
         }

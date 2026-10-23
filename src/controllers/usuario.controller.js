@@ -25,7 +25,14 @@ export const crearUsuario = async (req, res, next) => {
 
 export const actualizarUsuario = async (req, res, next) => {
   try {
-    const usuarioActualizado = await UsuarioService.actualizar(req.id, req.body)
+    const usuarioActualizado = await UsuarioService.actualizar(req.id, req.body, req.usuario)
+    res.json(usuarioActualizado)
+  } catch (error) { next(error) }
+}
+
+export const actualizarEstadoUsuario = async (req, res, next) => {
+  try {
+    const usuarioActualizado = await UsuarioService.cambiarEstado(req.id, req.body.std_usuario)
     res.json(usuarioActualizado)
   } catch (error) { next(error) }
 }
@@ -42,14 +49,14 @@ export const iniciarSesion = async (req, res, next) => {
     const usuario = await UsuarioService.iniciarSesion(req.iniciarSesionDTO)
 
     const token = generarToken(usuario);
-    
-    res.status(200).json({ 
-            mensaje: "Inicio de sesión exitoso",
-            token, 
-            usuario 
-        });
+
+    res.status(200).json({
+      mensaje: "Inicio de sesión exitoso",
+      token,
+      usuario
+    });
   } catch (error) { next(error) }
-}
+};
 
 export const obtenerMiPerfil = async (req, res, next) => {
     try {

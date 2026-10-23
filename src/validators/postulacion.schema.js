@@ -60,15 +60,6 @@ const validarLocalidad = (data, contexto) => {
     }
 };
 
-// export const crearPostulacionSchema = datosPostulacionSchema.extend({
-//     usuarioId: z.number({ 
-//         required_error: "El ID del usuario es obligatorio", 
-//         invalid_type_error: "El ID del usuario debe ser un número" 
-//     })
-//     .int("El ID del usuario debe ser un número entero")
-//     .positive("El ID del usuario debe ser un número positivo")
-// }).superRefine(validarLocalidad);
-
 export const actualizarPostulacionSchema = z.object({
     dni: z.string({ invalid_type_error: "El DNI debe ser texto" })
         .min(7, "El DNI debe tener al menos 7 caracteres")
@@ -94,30 +85,17 @@ export const actualizarPostulacionSchema = z.object({
     }).optional(),
     
     localidad: z.string({ invalid_type_error: "La localidad debe ser texto" }).optional(),
-    
-    std_postulacion: z.enum(['PENDIENTE', 'EN_REVISION', 'REVISION_REQUERIDA', 'APROBADA', 'RECHAZADA'], {
-        errorMap: () => ({ message: "El estado de postulación no es válido" })
-    }).optional(),
-    
-    observacion: z.string({ invalid_type_error: "La observación debe ser texto" }).nullable().optional(),
-    
-    adminId: z.number({ invalid_type_error: "El ID del administrador debe ser un número" })
-        .int("El ID del administrador debe ser un número entero")
-        .positive("El ID del administrador debe ser un número positivo").nullable().optional()
 }).refine((datos) => Object.keys(datos).length > 0, {
     message: "Debe enviar al menos un campo para actualizar."
 });
 
 export const evaluarPostulacionSchema = z.object({
-    std_postulacion: z.enum(['PENDIENTE', 'EN_REVISION', 'REVISION_REQUERIDA', 'APROBADA', 'RECHAZADA'], {
+    std_postulacion: z.enum(['EN_REVISION', 'REVISION_REQUERIDA', 'APROBADA', 'RECHAZADA'], {
         required_error: "El estado de postulación es obligatorio",
         invalid_type_error: "El estado enviado no es válido"
     }),
-    observacion: z.string({ invalid_type_error: "La observación debe ser texto" }).nullable().optional(),
-    adminId: z.number({ invalid_type_error: "El ID del administrador debe ser un número" })
-        .int("El ID del administrador debe ser un número entero")
-        .positive("El ID del administrador debe ser un número positivo").nullable().optional()
-});
+    observacion: z.string({ invalid_type_error: "La observación debe ser texto" }).nullable().optional()
+}).strict();
 
 export const datosPostulacionUsuarioSchema = datosPostulacionSchema.superRefine(validarLocalidad);
 
