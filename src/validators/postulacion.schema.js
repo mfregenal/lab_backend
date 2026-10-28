@@ -108,6 +108,7 @@ export const consultarPostulacionesSchema = z.object({
     dni: z.string({ invalid_type_error: "El DNI para filtrar debe ser texto" }).optional(),
     provincia: z.string({ invalid_type_error: "La provincia para filtrar debe ser texto" }).optional(),
     localidad: z.string({ invalid_type_error: "La localidad para filtrar debe ser texto" }).optional(),
+    rubroId: z.coerce.number().int().positive().optional(),
     
     pagina: z.coerce.number({ invalid_type_error: "La página debe ser un número" })
         .int("La página debe ser un número entero")

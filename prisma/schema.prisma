@@ -79,6 +79,8 @@ model Postulacion {
   rubro           Rubro       @relation(fields: [rubroId], references: [id_rubro], onDelete: Restrict)
 
   artesano        Artesano?
+
+  @@index([rubroId])
 }
 
 model Artesano {
