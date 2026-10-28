@@ -2,9 +2,13 @@ import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
 
 export const obtenerPostulacionesService = async (filtrosDTO, usuario) => {
-    const { estado, nombre, dni, provincia, localidad, pagina, limite} = filtrosDTO;
+    const { estado, nombre, dni, provincia, localidad, pagina, limite, rubroId} = filtrosDTO;
 
     const condiciones = {};
+
+    if (rubroId) {
+        condiciones.rubroId = Number(rubroId);
+    }
 
     if (estado) {
         condiciones.std_postulacion = estado;
@@ -23,7 +27,7 @@ export const obtenerPostulacionesService = async (filtrosDTO, usuario) => {
     }
 
     // Si el usuario es un ARTESANO, solo puede ver sus propias postulaciones
-    if (usuario.rol === 'ARTESANO') {
+    if (usuario && usuario.rol === 'ARTESANO') {
         condiciones.usuarioId = usuario.id;
     }
 
