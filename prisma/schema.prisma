@@ -105,6 +105,8 @@ model Producto {
 
   artesanoId      Int         
   artesano        Artesano    @relation(fields: [artesanoId], references: [id_artesano], onDelete: Cascade)
+
+  @@index([artesanoId])
 }
 
 model Pabellon {
