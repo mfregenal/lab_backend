@@ -12,6 +12,9 @@ node_modules/
 /prisma/migrations/*
 !/prisma/migrations/20261023141718/
 
+crearPrimerAdmin.js
+generarProductos.js
+
 .agents
 .claude
 .windsurf
