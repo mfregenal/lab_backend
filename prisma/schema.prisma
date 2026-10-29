@@ -149,6 +149,8 @@ model Consulta {
   query           Json?
   params          Json?
   createAt        DateTime    @default(now())
+
+  @@index([createAt])
 }
 
 model TokenRevocado {
