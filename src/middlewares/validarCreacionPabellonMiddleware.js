@@ -1,3 +1,4 @@
+import { crearError, detallarErroresZod } from "../utils/errores.js";
 import {
     crearPabellonSchema
 } from "../validators/pabellon.schema.js";
@@ -7,10 +8,7 @@ export const validarPabellonCreacion = (req, res, next) => {
         req.body
     );
     if (!resultado.success) {
-        return res.status(400).json({
-            mensaje: "Los datos enviados son inválidos.",
-            errores: resultado.error.issues
-        });
+        return next(crearError("Los datos enviados son inválidos.", 400, detallarErroresZod(resultado.error)));
     }
     req.body = resultado.data;
     return next();

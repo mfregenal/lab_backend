@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const crearStandSchema = z.object({
     codigo: z
-        .string({ required_error: "El código del stand es obligatorio." })
+        .string({ error: (i) => i.input === undefined ? "El código del stand es obligatorio." : undefined })
         .trim()
         .min(1, "El código no puede estar vacío."),
     latitud: z.coerce
@@ -18,7 +18,7 @@ export const crearStandSchema = z.object({
         .optional()
         .nullable(),
     sectorId: z.coerce
-        .number({ required_error: "El ID del sector es obligatorio." })
+        .number({ error: (i) => i.input === undefined ? "El ID del sector es obligatorio." : undefined })
         .int("Debe ser un número entero.")
         .positive("Debe ser un número positivo.")
         .optional(),
