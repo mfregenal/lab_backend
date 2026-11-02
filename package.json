@@ -16,7 +16,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "node --watch src/app.js"
+    "dev": "node --watch src/app.js",
+    "docs": "node generar-docs.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
@@ -26,11 +27,13 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.23.0",
+    "swagger-ui-express": "^5.0.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "prisma": "^7.10.0"
+    "prisma": "^7.10.0",
+    "swagger-autogen": "^2.23.7"
   },
   "allowScripts": {
     "bcrypt@6.0.0": true

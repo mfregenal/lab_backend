@@ -1,4 +1,6 @@
 import express from 'express'
+import swaggerUi from 'swagger-ui-express'
+import { readFileSync } from 'node:fs'
 import "./config/jwt.js";
 import { iniciarLimpiezaRevocaciones } from "./tareas/limpiezaRevocaciones.js";
 
@@ -23,6 +25,10 @@ app.use( express.json() )
 
 const PORT = Number(process.env.PORT) || 3000
 
+const swaggerDocument = JSON.parse(
+  readFileSync(new URL('../swagger-output.json', import.meta.url), 'utf8')
+)
+
 // Rutas de ambos módulos
 app.use('/artesanos', artesanoRoutes)
 app.use('/productos', productosRoutes)
@@ -34,6 +40,9 @@ app.use('/pabellones', pabellonRoutes)
 app.use('/sectores', sectorRoutes)
 app.use('/stands', standRoutes)
 app.use('/api/ubicaciones', ubicacionesRoutes);
+
+// Documentación de la API (Swagger UI)
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 // Bienvenida
 app.get( '/', ( req, res ) => {
