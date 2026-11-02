@@ -1,3 +1,4 @@
+import { crearError, detallarErroresZod } from "../utils/errores.js";
 import { crearStandSchema, consultarStandsSchemas, actualizarStandSchema } from "../validators/stand.schema.js";
 
 export const validarCreacionStand = (req, res, next) => {
@@ -6,10 +7,7 @@ export const validarCreacionStand = (req, res, next) => {
     );
 
     if (!resultado.success) {
-        return res.status(400).json({
-            mensaje: "Los datos enviados son inválidos.",
-            errores: resultado.error.issues
-        });
+        return next(crearError("Los datos enviados son inválidos.", 400, detallarErroresZod(resultado.error)));
     }
 
     req.body = resultado.data;
@@ -21,11 +19,7 @@ export const validarConsultaStands = (req, res, next) => {
     const resultado = consultarStandsSchemas.safeParse(req.query);
 
     if (!resultado.success) {
-        return res.status(400).json({
-            mensaje:
-                "Los parámetros de consulta son inválidos.",
-            errores: resultado.error.issues
-        });
+        return next(crearError("Los parámetros de consulta son inválidos.", 400, detallarErroresZod(resultado.error)));
     }
 
     req.consultaStands = resultado.data;
@@ -37,10 +31,7 @@ export const validarActualizacionStand = (req, res, next) => {
     const resultado = actualizarStandSchema.safeParse(req.body);
 
     if (!resultado.success) {
-        return res.status(400).json({
-            mensaje: "Los datos para actualizar el stand son inválidos.",
-            errores: resultado.error.issues,
-        });
+        return next(crearError("Los datos para actualizar el stand son inválidos.", 400, detallarErroresZod(resultado.error)));
     }
 
     req.body = resultado.data;
