@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const crearSectorSchema = z.object({
     nom_sector: z
-        .string({ required_error: "El nombre del sector es requerido." })
+        .string({ error: (i) => i.input === undefined ? "El nombre del sector es requerido." : undefined })
         .trim()
         .min(1, "El nombre del sector no puede estar vacío."),
     pabellonId: z.coerce
@@ -11,7 +11,7 @@ export const crearSectorSchema = z.object({
         .positive("El ID de pabellón debe ser mayor a 0.")
         .optional(),
     id_pabellon: z.coerce
-        .number({ required_error: "El ID de pabellón es requerido." })
+        .number({ error: (i) => i.input === undefined ? "El ID de pabellón es requerido." : undefined })
         .int("El ID de pabellón debe ser un número entero.")
         .positive("El ID de pabellón debe ser mayor a 0.")
         .optional(),

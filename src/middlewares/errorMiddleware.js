@@ -1,7 +1,7 @@
 export const errorMiddleware = (err, req, res, next) => {
   if (err.code === 'P2002') {
     return res.status(409).json({
-      error: `Ya existe un registro con ese valor único en el campo (${err.meta?.target || 'código'})`
+      mensaje: `Ya existe un registro con ese valor único en el campo (${err.meta?.target || 'código'})`
     });
   }
 
@@ -9,8 +9,8 @@ export const errorMiddleware = (err, req, res, next) => {
 
   if (status >= 500) {
     console.error(err)
-    return res.status(status).json({ error: "Error interno del servidor" })
+    return res.status(status).json({ mensaje: "Error interno del servidor" })
   }
 
-  res.status(status).json({ error: err.message || "Ocurrio un error inesperado", detalles: err.detalles || {} })
+  res.status(status).json({ mensaje: err.message || "Ocurrio un error inesperado", detalles: err.detalles || {} })
 }

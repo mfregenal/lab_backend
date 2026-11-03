@@ -1,13 +1,11 @@
+import { crearError, detallarErroresZod } from '../utils/errores.js';
 import { consultarArtesanosSchema, asignarStandSchema } from '../validators/artesano.schema.js';
 
 export const validarConsultaArtesanos = (req, res, next) => {
     const resultado = consultarArtesanosSchema.safeParse(req.query);
 
     if (!resultado.success) {
-        return res.status(400).json({
-            mensaje: "Los parámetros de búsqueda son inválidos.",
-            errores: resultado.error.issues
-        });
+        return next(crearError("Los parámetros de búsqueda son inválidos.", 400, detallarErroresZod(resultado.error)));
     }
 
     req.queryValido = resultado.data;
@@ -16,7 +14,7 @@ export const validarConsultaArtesanos = (req, res, next) => {
 
 export const validarAsignacionStand = (req, res, next) => {
     const resultado = asignarStandSchema.safeParse(req.body);
-    if (!resultado.success) return res.status(400).json({ mensaje: 'Debe indicar un stand válido.', errores: resultado.error.issues });
+    if (!resultado.success) return next(crearError('Debe indicar un stand válido.', 400, detallarErroresZod(resultado.error)));
     req.body = resultado.data;
     return next();
 };

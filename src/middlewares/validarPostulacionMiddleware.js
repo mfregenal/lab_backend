@@ -1,3 +1,4 @@
+import { crearError, detallarErroresZod } from "../utils/errores.js";
 import { actualizarPostulacionSchema, evaluarPostulacionSchema, consultarPostulacionesSchema } from "../validators/postulacion.schema.js";
 
 export const validarActualizacionPostulacion = (req, res, next) => {
@@ -15,10 +16,7 @@ export const validarActualizacionPostulacion = (req, res, next) => {
 
 
   if (!resultado.success) {
-    return res.status(400).json({
-      mensaje: "Los datos enviados son inválidos.",
-      errores: resultado.error.issues
-    });
+    return next(crearError("Los datos enviados son inválidos.", 400, detallarErroresZod(resultado.error)));
   }
 
 
@@ -32,10 +30,7 @@ export const validarEvaluacionPostulacion = (req, res, next) => {
 
 
   if (!resultado.success) {
-    return res.status(400).json({
-      mensaje: "Los datos de evaluación son inválidos.",
-      errores: resultado.error.issues
-    });
+    return next(crearError("Los datos de evaluación son inválidos.", 400, detallarErroresZod(resultado.error)));
   }
 
 
@@ -54,10 +49,7 @@ export const validarConsultaPostulaciones = (req, res, next) => {
 
 
   if (!resultado.success) {
-    return res.status(400).json({
-      mensaje: "Los parámetros de búsqueda son inválidos.",
-      errores: resultado.error.issues
-    });
+    return next(crearError("Los parámetros de búsqueda son inválidos.", 400, detallarErroresZod(resultado.error)));
   }
 
 
