@@ -19,7 +19,7 @@ import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
 import { errorMiddleware } from './middlewares/errorMiddleware.js'
 
 
-const app = express()
+export const app = express()
 
 app.use( express.json() )
 
@@ -52,7 +52,10 @@ app.get( '/', ( req, res ) => {
 app.use( notFoundMiddleware ) // Middleware para manejar rutas no encontradas
 app.use( errorMiddleware ) // Middleware para manejar errores
 
-app.listen( PORT, () => {
-  console.log( `Servidor escuchando en el puerto http://localhost:${PORT}` )
-  iniciarLimpiezaRevocaciones();
-} )
+// En las pruebas (NODE_ENV=test) no se abre el puerto ni se inicia la limpieza periódica
+if ( process.env.NODE_ENV !== 'test' ) {
+  app.listen( PORT, () => {
+    console.log( `Servidor escuchando en el puerto http://localhost:${PORT}` )
+    iniciarLimpiezaRevocaciones();
+  } )
+}
