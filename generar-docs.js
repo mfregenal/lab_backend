@@ -2,6 +2,7 @@ import swaggerAutogen from "swagger-autogen";
 import { fileURLToPath } from "node:url";
 import * as esquemas_cur from "./src/documentacion/esquemas-cur.js";
 import * as esquemas_pap from "./src/documentacion/esquemas-pap.js";
+import * as esquemas_upss from './src/documentacion/esquemas-upss.js';
 
 const doc = {
   info: {
@@ -14,7 +15,7 @@ const doc = {
     securitySchemes: {
       bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT" }
     },
-    "@schemas": { ...esquemas_cur, ...esquemas_pap }
+    "@schemas": { ...esquemas_cur, ...esquemas_pap, ...esquemas_upss }
   }
 };
 
