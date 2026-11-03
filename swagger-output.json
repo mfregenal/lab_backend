@@ -1,0 +1,1376 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Gestión del Poncho",
+    "version": "1.0.0",
+    "description": "Documentación de la API del Poncho."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Servidor local"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/artesanos/": {
+      "get": {
+        "tags": [
+          "Artesanos"
+        ],
+        "summary": "Obtener todos los artesanos",
+        "description": "Devuelve una lista de los artesanos registrados. Requiere token activo y rol de ADMINISTRADOR.",
+        "responses": {
+          "200": {
+            "description": "Lista de artesanos obtenida exitosamente."
+          },
+          "400": {
+            "description": "Parámetros de consulta inválidos."
+          },
+          "401": {
+            "description": "Token ausente, inválido, vencido o revocado."
+          },
+          "403": {
+            "description": "Acceso denegado. Se requiere rol de ADMINISTRADOR."
+          }
+        }
+      }
+    },
+    "/artesanos/{id}": {
+      "get": {
+        "tags": [
+          "Artesanos"
+        ],
+        "summary": "Obtener un artesano por ID",
+        "description": "Busca y devuelve los detalles de un perfil de artesano. Requiere rol de ARTESANO o ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del artesano"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artesano encontrado."
+          },
+          "400": {
+            "description": "ID inválido."
+          },
+          "401": {
+            "description": "Token ausente, inválido, vencido o revocado."
+          },
+          "403": {
+            "description": "Acceso denegado. Se requiere rol de ARTESANO o ADMINISTRADOR."
+          },
+          "404": {
+            "description": "El artesano no existe."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Artesanos"
+        ],
+        "summary": "Actualizar datos del artesano",
+        "description": "Permite modificar la información del perfil del artesano. Requiere rol de ARTESANO o ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del perfil de artesano a actualizar"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfil de artesano actualizado exitosamente."
+          },
+          "400": {
+            "description": "Cuerpo de la petición inválido."
+          },
+          "401": {
+            "description": "Token ausente o inválido."
+          },
+          "403": {
+            "description": "Acceso denegado."
+          },
+          "404": {
+            "description": "El artesano no existe."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarArtesano"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Artesanos"
+        ],
+        "summary": "Eliminar un perfil de artesano",
+        "description": "Elimina un artesano del sistema. Exclusivo para ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del artesano a eliminar"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artesano eliminado exitosamente."
+          },
+          "400": {
+            "description": "ID inválido."
+          },
+          "401": {
+            "description": "Token ausente o inválido."
+          },
+          "403": {
+            "description": "Acceso denegado. Exclusivo para ADMINISTRADOR."
+          },
+          "404": {
+            "description": "El artesano no existe."
+          }
+        }
+      }
+    },
+    "/artesanos/{id}/stand": {
+      "post": {
+        "tags": [
+          "Artesanos"
+        ],
+        "summary": "Asignar stand a un artesano",
+        "description": "Permite asignar un stand específico a un artesano. Exclusivo para ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del artesano al que se le asignará el stand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stand asignado exitosamente."
+          },
+          "400": {
+            "description": "Datos de asignación inválidos."
+          },
+          "401": {
+            "description": "Token ausente o inválido."
+          },
+          "403": {
+            "description": "Acceso denegado. Exclusivo para ADMINISTRADOR."
+          },
+          "404": {
+            "description": "El artesano no existe."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsignacionStand"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/productos/": {
+      "get": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Obtener todos los productos",
+        "description": "Devuelve una lista de todos los productos. Soporta autenticación opcional.",
+        "responses": {
+          "200": {
+            "description": "Lista de productos obtenida exitosamente."
+          },
+          "400": {
+            "description": "Parámetros de consulta inválidos."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Cargar un nuevo producto",
+        "description": "Requiere token JWT activo y rol de ARTESANO o ADMINISTRADOR.",
+        "responses": {
+          "201": {
+            "description": "Producto creado exitosamente."
+          },
+          "400": {
+            "description": "Cuerpo inválido. Faltan datos o no cumplen el formato (Validación Zod)."
+          },
+          "401": {
+            "description": "Token ausente, inválido, vencido o revocado."
+          },
+          "403": {
+            "description": "Cuenta inactiva o no tiene rol de ARTESANO / ADMINISTRADOR."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NuevoProducto"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/productos/{id}": {
+      "get": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Obtener un producto por ID",
+        "description": "Busca y devuelve los detalles de un producto específico.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del producto"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Producto encontrado."
+          },
+          "400": {
+            "description": "ID inválido."
+          },
+          "404": {
+            "description": "El producto no existe."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Actualizar un producto existente",
+        "description": "Permite modificar los datos de un producto. Requiere token JWT y rol de ARTESANO o ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del producto a actualizar"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Producto actualizado exitosamente."
+          },
+          "400": {
+            "description": "ID o cuerpo inválido."
+          },
+          "401": {
+            "description": "Token ausente, inválido, vencido o revocado."
+          },
+          "403": {
+            "description": "Cuenta inactiva o sin permisos suficientes."
+          },
+          "404": {
+            "description": "El producto no existe."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NuevoProducto"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Eliminar un producto",
+        "description": "Borra un producto de la base de datos. Requiere token JWT y rol de ARTESANO o ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID del producto a eliminar"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Producto eliminado exitosamente."
+          },
+          "400": {
+            "description": "ID inválido."
+          },
+          "401": {
+            "description": "Token ausente, inválido, vencido o revocado."
+          },
+          "403": {
+            "description": "Cuenta inactiva o sin permisos suficientes."
+          },
+          "404": {
+            "description": "El producto no existe."
+          }
+        }
+      }
+    },
+    "/usuarios/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/usuarios/login": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/usuarios/registro-administrador": {
+      "post": {
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/usuarios/me": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/usuarios/logout": {
+      "post": {
+        "description": "",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/usuarios/{id}/activo": {
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "std_usuario": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usuarios/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/rubros/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/rubros/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/consultas/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/postulaciones/": {
+      "get": {
+        "tags": [
+          "Postulaciones"
+        ],
+        "summary": "Obtener todas las postulaciones",
+        "description": "Devuelve una lista de postulaciones. Requiere token activo y rol de ARTESANO o ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de postulaciones obtenida exitosamente."
+          },
+          "400": {
+            "description": "Parámetros de consulta inválidos."
+          },
+          "401": {
+            "description": "Token ausente, inválido, vencido o revocado."
+          },
+          "403": {
+            "description": "Acceso denegado. Se requiere rol de ARTESANO o ADMINISTRADOR."
+          }
+        }
+      }
+    },
+    "/postulaciones/{id}": {
+      "get": {
+        "tags": [
+          "Postulaciones"
+        ],
+        "summary": "Obtener una postulación por ID",
+        "description": "Busca y devuelve los detalles de una postulación específica. Requiere rol de ARTESANO o ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID de la postulación"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Postulación encontrada."
+          },
+          "400": {
+            "description": "ID inválido."
+          },
+          "401": {
+            "description": "Token ausente o inválido."
+          },
+          "403": {
+            "description": "Acceso denegado. Se requiere rol de ARTESANO o ADMINISTRADOR."
+          },
+          "404": {
+            "description": "La postulación no existe."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Postulaciones"
+        ],
+        "summary": "Actualizar datos de una postulación",
+        "description": "Permite modificar la información de una postulación (ej. actualizar provincia o trayectoria). Requiere rol de ARTESANO o ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID de la postulación a actualizar"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Postulación actualizada exitosamente."
+          },
+          "400": {
+            "description": "Cuerpo de la petición inválido."
+          },
+          "401": {
+            "description": "Token ausente o inválido."
+          },
+          "403": {
+            "description": "Acceso denegado."
+          },
+          "404": {
+            "description": "La postulación no existe."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarPostulacion"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Postulaciones"
+        ],
+        "summary": "Eliminar una postulación",
+        "description": "Elimina una postulación del sistema. Exclusivo para ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID de la postulación a eliminar"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Postulación eliminada exitosamente."
+          },
+          "400": {
+            "description": "ID inválido."
+          },
+          "401": {
+            "description": "Token ausente o inválido."
+          },
+          "403": {
+            "description": "Acceso denegado. Exclusivo para ADMINISTRADOR."
+          },
+          "404": {
+            "description": "La postulación no existe."
+          }
+        }
+      }
+    },
+    "/postulaciones/{id}/evaluar": {
+      "put": {
+        "tags": [
+          "Postulaciones"
+        ],
+        "summary": "Evaluar una postulación (Aprobar/Rechazar)",
+        "description": "Permite cambiar el estado de evaluación de la postulación. Exclusivo para ADMINISTRADOR.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID de la postulación a evaluar"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Estado de postulación actualizado exitosamente."
+          },
+          "400": {
+            "description": "Datos de evaluación inválidos (ej. estado no permitido)."
+          },
+          "401": {
+            "description": "Token ausente o inválido."
+          },
+          "403": {
+            "description": "Acceso denegado. Exclusivo para ADMINISTRADOR."
+          },
+          "404": {
+            "description": "La postulación no existe."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluarPostulacion"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pabellones/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/pabellones/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/sectores/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/sectores/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/stands/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/stands/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/ubicaciones/provincias": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ubicaciones/localidades/{provincia}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "provincia",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "ActualizarArtesano": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "María"
+          },
+          "apellido": {
+            "type": "string",
+            "example": "Gómez"
+          },
+          "celular": {
+            "type": "string",
+            "example": "3834123456"
+          },
+          "rubro": {
+            "type": "string",
+            "example": "Textil"
+          }
+        }
+      },
+      "ActualizarPostulacion": {
+        "type": "object",
+        "properties": {
+          "dni": {
+            "type": "string",
+            "example": "12345678"
+          },
+          "celular": {
+            "type": "string",
+            "example": "3834123456"
+          },
+          "nom_emprend": {
+            "type": "string",
+            "example": "Artesanías del Valle"
+          },
+          "desc_emprend": {
+            "type": "string",
+            "example": "Fabricación de piezas únicas en arcilla."
+          },
+          "trayectoria": {
+            "type": "string",
+            "example": "5 años de experiencia comprobable"
+          },
+          "rubroId": {
+            "type": "integer",
+            "example": 2
+          },
+          "provincia": {
+            "type": "string",
+            "example": "Catamarca"
+          },
+          "localidad": {
+            "type": "string",
+            "example": "BELEN"
+          }
+        }
+      },
+      "AsignacionStand": {
+        "type": "object",
+        "properties": {
+          "standId": {
+            "type": "integer",
+            "example": 45
+          }
+        },
+        "required": [
+          "standId"
+        ]
+      },
+      "EvaluarPostulacion": {
+        "type": "object",
+        "properties": {
+          "std_postulacion": {
+            "type": "string",
+            "enum": [
+              "EN_REVISION",
+              "REVISION_REQUERIDA",
+              "APROBADA",
+              "RECHAZADA"
+            ],
+            "example": "APROBADA"
+          },
+          "observacion": {
+            "type": "string",
+            "example": "La postulación cumple con todos los requisitos y fotos solicitadas."
+          }
+        },
+        "required": [
+          "std_postulacion"
+        ]
+      },
+      "NuevoProducto": {
+        "type": "object",
+        "properties": {
+          "nom_producto": {
+            "type": "string",
+            "example": "Poncho de vicuña tejido a mano"
+          },
+          "desc_producto": {
+            "type": "string",
+            "example": "Poncho tradicional con tintes naturales de la región."
+          },
+          "precio": {
+            "type": "number",
+            "example": 150000
+          },
+          "std_producto": {
+            "type": "boolean",
+            "example": true
+          },
+          "artesanoId": {
+            "type": "integer",
+            "example": 1
+          }
+        },
+        "required": [
+          "nom_producto",
+          "precio"
+        ]
+      }
+    }
+  }
+}

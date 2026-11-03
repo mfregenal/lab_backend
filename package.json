@@ -15,6 +15,10 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
+    "docs": "node generar-docs.js",
+    "test:schema": "node --test tests/productos-schema.test.js",
+    "db:test:preparar": "node --env-file=.env.test node_modules/prisma/build/index.js migrate deploy",
+    "test:integracion": "node --env-file=.env.test --test tests/productos-integracion.test.js",
     "start": "node src/app.js",
     "dev": "node --watch src/app.js"
   },
@@ -26,11 +30,14 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.23.0",
+    "swagger-ui-express": "^5.0.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "prisma": "^7.10.0"
+    "prisma": "^7.10.0",
+    "supertest": "^7.3.1",
+    "swagger-autogen": "^2.23.7"
   },
   "allowScripts": {
     "bcrypt@6.0.0": true

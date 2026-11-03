@@ -7,6 +7,8 @@ node_modules/
 !.env.example
 
 /src/generated/prisma
+/src/app2.js
+
 /prisma/migrations
 !/prisma/migrations/
 /prisma/migrations/*
