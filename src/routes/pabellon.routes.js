@@ -163,8 +163,8 @@ router.delete('/:id', autenticarUsuario, autorizarRoles('ADMINISTRADOR'), valida
     required: true,
     description: 'Identificador del pabellón a eliminar'
   }
-  #swagger.responses[200] = {
-    description: "Pabellón eliminado correctamente."
+  #swagger.responses[204] = {
+    description: "Pabellón eliminado correctamente (sin contenido)."
   }
   #swagger.responses[400] = {
     description: "ID inválido.",
