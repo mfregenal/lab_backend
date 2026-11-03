@@ -1,49 +1,46 @@
-import express from 'express'
-import "./config/jwt.js";
-import { iniciarLimpiezaRevocaciones } from "./tareas/limpiezaRevocaciones.js";
+import express from 'express';
+import { readFileSync } from 'node:fs';
+import swaggerUi from 'swagger-ui-express';
 
-import artesanoRoutes from './routes/artesano.routes.js'
-import productosRoutes from './routes/producto.routes.js'
-import usuarioRoutes from './routes/usuario.routes.js'
-import rubroRoutes from './routes/rubro.routes.js'
-import postulacionRoutes from './routes/postulacion.routes.js'  
-import pabellonRoutes from './routes/pabellon.routes.js'
-import sectorRoutes from './routes/sector.routes.js'
-import standRoutes from './routes/stand.routes.js'
-import consultaRoutes from './routes/consulta.routes.js'
-import ubicacionesRoutes from './routes/ubicacion.routes.js';
+import './config/jwt.js';
+import { iniciarLimpiezaRevocaciones } from './tareas/limpiezaRevocaciones.js';
 
-import { notFoundMiddleware } from './middlewares/notFoundMiddleware.js'
-import { errorMiddleware } from './middlewares/errorMiddleware.js'
+// Importación de rutas
+import artesanoRoutes from './routes/artesano.routes.js';
+import productosRoutes from './routes/producto.routes.js';
+import usuarioRoutes from './routes/usuario.routes.js';
+import rubroRoutes from './routes/rubro.routes.js';
+import postulacionRoutes from './routes/postulacion.routes.js';
+import pabellonRoutes from './routes/pabellon.routes.js';
+import sectorRoutes from './routes/sector.routes.js';
+import swaggerAutogen from "swagger-autogen";
+import { fileURLToPath } from "node:url";
+import * as esquemas_cur from "./src/documentacion/esquemas.js";
+import * as esquemas_pap from "./src/documentacion/esquemas-pap.js";
 
+const doc = {
+  info: {
+    title: "API de Gestión del Poncho",
+    version: "1.0.0",
+    description: "Documentación de la API del Poncho."
+  },
+  servers: [{ url: "/", description: "Servidor local" }],
+  components: {
+    securitySchemes: {
+      bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT" }
+    },
+    "@schemas": { ...esquemas_cur, ...esquemas_pap }
+  }
+};
 
-const app = express()
+const ruta = (archivo) =>
+  fileURLToPath(new URL(archivo, import.meta.url)).replaceAll("\\", "/");
 
-app.use( express.json() )
+const outputFile = ruta("./swagger-output.json");
+const routes = [ruta("./src/app.js")];
+const generar = swaggerAutogen({ openapi: "3.0.0" });
 
-const PORT = Number(process.env.PORT) || 3000
-
-// Rutas de ambos módulos
-app.use('/artesanos', artesanoRoutes)
-app.use('/productos', productosRoutes)
-app.use('/usuarios', usuarioRoutes)
-app.use('/rubros', rubroRoutes)
-app.use('/consultas', consultaRoutes)
-app.use('/postulaciones', postulacionRoutes)
-app.use('/pabellones', pabellonRoutes)
-app.use('/sectores', sectorRoutes)
-app.use('/stands', standRoutes)
-app.use('/api/ubicaciones', ubicacionesRoutes);
-
-// Bienvenida
-app.get( '/', ( req, res ) => {
-  res.send( 'Bienvenido a la API REST de gestión del poncho' )
-} )
-
-app.use( notFoundMiddleware ) // Middleware para manejar rutas no encontradas
-app.use( errorMiddleware ) // Middleware para manejar errores
-
-app.listen( PORT, () => {
-  console.log( `Servidor escuchando en el puerto http://localhost:${PORT}` )
-  iniciarLimpiezaRevocaciones();
-} )
+const resultado = await generar(outputFile, routes, doc);
+if (!resultado.success) {
+  throw new Error("No se pudo generar la especificación OpenAPI.");
+}
