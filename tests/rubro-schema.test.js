@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { crearRubroSchema } from "../src/validators/rubro.schema.js";
 
+// 2.3: pruebas unitarias con safeParse y una tabla de casos válidos e inválidos.
 const casos = [
   ["nombre válido", { nom_rubro: "Textiles" }, true],
   ["con descripción", { nom_rubro: "Textiles", desc_rubro: "Tejidos" }, true],
