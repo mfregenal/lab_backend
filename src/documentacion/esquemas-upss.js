@@ -39,7 +39,7 @@ export const NuevoPabellon = {
     }
 };
 
-// --- SECTOR ---
+
 export const SectorDetalle = {
     type: "object",
     required: ["id_sector", "nom_sector", "pabellonId"],
