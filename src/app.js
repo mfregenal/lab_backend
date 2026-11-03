@@ -17,6 +17,7 @@ import swaggerAutogen from "swagger-autogen";
 import { fileURLToPath } from "node:url";
 import * as esquemas_cur from "./src/documentacion/esquemas.js";
 import * as esquemas_pap from "./src/documentacion/esquemas-pap.js";
+import * as esquemas_upps from "./src/documentacion/esquemas-upss.js";
 
 const doc = {
   info: {
