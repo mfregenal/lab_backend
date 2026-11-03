@@ -15,7 +15,7 @@ const doc = {
     securitySchemes: {
       bearerAuth: { type: "http", scheme: "bearer", bearerFormat: "JWT" }
     },
-    "@schemas": { ...esquemas_cur, ...esquemas_pap }
+    "@schemas": { ...esquemas_cur, ...esquemas_pap, ...esquemas_upss }
   }
 };
 
