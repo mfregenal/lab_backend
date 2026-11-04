@@ -12,6 +12,9 @@ router.get('/',
     #swagger.tags = ['Postulaciones']
     #swagger.summary = 'Obtener todas las postulaciones'
     #swagger.description = 'Devuelve una lista de postulaciones. Requiere token activo y rol de ARTESANO o ADMINISTRADOR.'
+    #swagger.security = [{
+        "bearerAuth": []
+    }]
     #swagger.responses[200] = { description: 'Lista de postulaciones obtenida exitosamente.' }
     #swagger.responses[400] = { description: 'Parámetros de consulta inválidos.' }
     #swagger.responses[401] = { description: 'Token ausente, inválido, vencido o revocado.' }
@@ -28,6 +31,9 @@ router.get('/:id',
     #swagger.tags = ['Postulaciones']
     #swagger.summary = 'Obtener una postulación por ID'
     #swagger.description = 'Busca y devuelve los detalles de una postulación específica. Requiere rol de ARTESANO o ADMINISTRADOR.'
+    #swagger.security = [{
+        "bearerAuth": []
+    }]
     #swagger.parameters['id'] = { in: 'path', description: 'ID de la postulación' }
     #swagger.responses[200] = { description: 'Postulación encontrada.' }
     #swagger.responses[400] = { description: 'ID inválido.' }
@@ -46,6 +52,9 @@ router.put('/:id',
     #swagger.tags = ['Postulaciones']
     #swagger.summary = 'Actualizar datos de una postulación'
     #swagger.description = 'Permite modificar la información de una postulación (ej. actualizar provincia o trayectoria). Requiere rol de ARTESANO o ADMINISTRADOR.'
+    #swagger.security = [{
+        "bearerAuth": []
+    }]
     #swagger.parameters['id'] = { in: 'path', description: 'ID de la postulación a actualizar' }
     
     #swagger.requestBody = {
@@ -77,6 +86,9 @@ router.put('/:id/evaluar',
     #swagger.tags = ['Postulaciones']
     #swagger.summary = 'Evaluar una postulación (Aprobar/Rechazar)'
     #swagger.description = 'Permite cambiar el estado de evaluación de la postulación. Exclusivo para ADMINISTRADOR.'
+    #swagger.security = [{
+        "bearerAuth": []
+    }]
     #swagger.parameters['id'] = { in: 'path', description: 'ID de la postulación a evaluar' }
     
     #swagger.requestBody = {
@@ -108,6 +120,9 @@ router.delete('/:id',
     #swagger.tags = ['Postulaciones']
     #swagger.summary = 'Eliminar una postulación'
     #swagger.description = 'Elimina una postulación del sistema. Exclusivo para ADMINISTRADOR.'
+    #swagger.security = [{
+        "bearerAuth": []
+    }]
     #swagger.parameters['id'] = { in: 'path', description: 'ID de la postulación a eliminar' }
     #swagger.responses[200] = { description: 'Postulación eliminada exitosamente.' }
     #swagger.responses[400] = { description: 'ID inválido.' }
