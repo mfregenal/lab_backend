@@ -6,6 +6,11 @@ import { loggerConsultas } from '../middlewares/loggerConsultasMiddleware.js'
 import { autenticarUsuario } from '../middlewares/autenticacion.middleware.js'
 import { autorizarRoles } from '../middlewares/autorizacion.middleware.js'
 
+// Documentación OpenAPI de este router (comentarios #swagger de cada operación):
+// 1.3: protegidas con #swagger.security = [{ bearerAuth: [] }]; las públicas no declaran seguridad.
+// 1.4: cada operación tiene tags, summary y parámetros de ruta/consulta ($ref a IdRuta, Pagina, Limite, etc.).
+// 1.5: se listan todas las respuestas posibles; una por operación incluye el esquema ErrorApi y un ejemplo.
+// 1.6: los códigos, cuerpos y reglas documentados coinciden con los middlewares y servicios.
 const router = express.Router()
 
 router.get('/',
@@ -20,7 +25,7 @@ router.get('/',
     #swagger.parameters['ordenPor'] = { in: 'query', schema: { $ref: "#/components/schemas/OrdenRubros" } }
     #swagger.parameters['direccion'] = { in: 'query', schema: { $ref: "#/components/schemas/Direccion" } }
     #swagger.responses[200] = { description: "Listado paginado de rubros." }
-    #swagger.responses[400] = { description: "Parámetros de consulta inválidos." }
+    #swagger.responses[400] = { description: "Parámetros de consulta inválidos.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "Datos de consulta inválidos", "detalles": [{"campo": "limite", "mensaje": "Máximo 100 por página"}]} } } }
   */
   loggerConsultas, validarConsultaRubro, obtenerRubros)
 
@@ -32,7 +37,7 @@ router.get('/:id',
     #swagger.parameters['id'] = { in: 'path', required: true, schema: { $ref: "#/components/schemas/IdRuta" } }
     #swagger.responses[200] = { description: "Rubro encontrado." }
     #swagger.responses[400] = { description: "ID inválido." }
-    #swagger.responses[404] = { description: "Rubro inexistente." }
+    #swagger.responses[404] = { description: "Rubro inexistente.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "Rubro no encontrado", "detalles": {}} } } }
   */
   validarId, obtenerRubroPorId)
 
@@ -47,7 +52,7 @@ router.post('/',
     #swagger.responses[400] = { description: "Cuerpo inválido o cabecera Bearer mal formada." }
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
     #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido." }
-    #swagger.responses[409] = { description: "El nombre del rubro ya existe." }
+    #swagger.responses[409] = { description: "El nombre del rubro ya existe.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "El nombre del rubro ya existe", "detalles": {}} } } }
   */
   autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarCreacionRubro, crearRubro)
 
@@ -63,7 +68,7 @@ router.put('/:id',
     #swagger.responses[400] = { description: "ID o cuerpo inválido, o cabecera Bearer mal formada." }
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
     #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido." }
-    #swagger.responses[404] = { description: "Rubro inexistente." }
+    #swagger.responses[404] = { description: "Rubro inexistente.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "Rubro no encontrado", "detalles": {}} } } }
     #swagger.responses[409] = { description: "El nombre del rubro ya existe." }
   */
   autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarId, validarActualizacionRubro, actualizarRubro)
@@ -79,7 +84,7 @@ router.delete('/:id',
     #swagger.responses[400] = { description: "ID inválido o cabecera Bearer mal formada." }
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
     #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido." }
-    #swagger.responses[404] = { description: "Rubro inexistente." }
+    #swagger.responses[404] = { description: "Rubro inexistente.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "Rubro no encontrado", "detalles": {}} } } }
   */
   autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarId, eliminarRubro)
 
