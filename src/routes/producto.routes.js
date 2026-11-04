@@ -13,8 +13,25 @@ router.get('/',
     #swagger.tags = ['Productos']
     #swagger.summary = 'Obtener todos los productos'
     #swagger.description = 'Devuelve una lista de todos los productos. Soporta autenticación opcional.'
-    #swagger.responses[200] = { description: 'Lista de productos obtenida exitosamente.' }
-    #swagger.responses[400] = { description: 'Parámetros de consulta inválidos.' }
+    #swagger.security = [] 
+    
+    #swagger.parameters['nombre'] = { in: 'query', type: 'string', description: 'Filtrar por nombre del producto' }
+    #swagger.parameters['rubro'] = { in: 'query', type: 'string', description: 'Filtrar por rubro' }
+    #swagger.parameters['stand'] = { in: 'query', type: 'string', description: 'Filtrar por código de stand' }
+    #swagger.parameters['std_producto'] = { in: 'query', type: 'boolean', description: 'Filtrar por estado del producto' }
+    #swagger.parameters['artesanoId'] = { in: 'query', type: 'integer', description: 'Filtrar por ID de artesano' }
+    #swagger.parameters['ordenPor'] = { in: 'query', type: 'string', description: 'Campo de ordenamiento' }
+    #swagger.parameters['direccion'] = { in: 'query', type: 'string', description: 'Dirección (asc/desc)' }
+    #swagger.parameters['pagina'] = { in: 'query', schema: { $ref: '#/components/schemas/Pagina' } }
+    #swagger.parameters['limite'] = { in: 'query', schema: { $ref: '#/components/schemas/Limite' } }
+
+   #swagger.responses[400] = { 
+        description: 'Cuerpo inválido. Faltan datos o no cumplen el formato (Validación Zod).',
+        schema: { $ref: "#/components/schemas/ErrorApi" } 
+    }
+    
+    #swagger.responses[401] = { description: 'Token ausente, inválido, vencido o revocado.' }
+    #swagger.responses[403] = { description: 'Cuenta inactiva o no tiene rol de ARTESANO / ADMINISTRADOR.' }
     */
     autenticarUsuarioOpcional, 
     loggerConsultas, 
@@ -27,6 +44,7 @@ router.get('/:id',
     #swagger.tags = ['Productos']
     #swagger.summary = 'Obtener un producto por ID'
     #swagger.description = 'Busca y devuelve los detalles de un producto específico.'
+    #swagger.security = []
     #swagger.parameters['id'] = { in: 'path', description: 'ID del producto' }
     #swagger.responses[200] = { description: 'Producto encontrado.' }
     #swagger.responses[400] = { description: 'ID inválido.' }
@@ -42,6 +60,9 @@ router.post('/',
     #swagger.tags = ['Productos']
     #swagger.summary = 'Cargar un nuevo producto'
     #swagger.description = 'Requiere token JWT activo y rol de ARTESANO o ADMINISTRADOR.'
+    #swagger.security = [{
+        "bearerAuth": []
+    }]
     
     #swagger.requestBody = {
         required: true,
@@ -70,6 +91,9 @@ router.put('/:id',
     #swagger.tags = ['Productos']
     #swagger.summary = 'Actualizar un producto existente'
     #swagger.description = 'Permite modificar los datos de un producto. Requiere token JWT y rol de ARTESANO o ADMINISTRADOR.'
+    #swagger.security = [{
+        "bearerAuth": []
+    }]
     #swagger.parameters['id'] = { in: 'path', description: 'ID del producto a actualizar' }
     
     #swagger.requestBody = {
@@ -101,6 +125,9 @@ router.delete('/:id',
     #swagger.tags = ['Productos']
     #swagger.summary = 'Eliminar un producto'
     #swagger.description = 'Borra un producto de la base de datos. Requiere token JWT y rol de ARTESANO o ADMINISTRADOR.'
+    #swagger.security = [{
+        "bearerAuth": []
+    }]
     #swagger.parameters['id'] = { in: 'path', description: 'ID del producto a eliminar' }
     #swagger.responses[200] = { description: 'Producto eliminado exitosamente.' }
     #swagger.responses[400] = { description: 'ID inválido.' }
