@@ -52,8 +52,8 @@ export async function crearEscenario(app, prisma) {
     return { usuario, token: sesion.token };
   };
 
-  const { usuario: ana, token: tokenAna } = await registrar("Ana", 0);
-  const { usuario: bruno, token: tokenBruno } = await registrar("Bruno", 1);
+  const { usuario: maria, token: tokenAna } = await registrar("Maria", 0);
+  const { usuario: jose, token: tokenBruno } = await registrar("Jose", 1);
 
   return { admin, tokenAdmin, rubro, ana, tokenAna, bruno, tokenBruno };
 }

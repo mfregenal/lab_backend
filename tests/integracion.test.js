@@ -57,31 +57,31 @@ test("El administrador crea un rubro y queda guardado en PostgreSQL", async () =
 
 // 2.5: cada usuario autenticado obtiene únicamente su propio perfil.
 test("GET /usuarios/me devuelve únicamente el perfil propio", async () => {
-  const { ana, bruno, tokenAna, tokenBruno } = datos;
+  const { maria, jose, tokenMaria, tokenJose } = datos;
 
-  const { body: perfilAna } = await request(app).get("/usuarios/me")
-    .set("Authorization", `Bearer ${tokenAna}`).expect(200)
+  const { body: perfilMaria } = await request(app).get("/usuarios/me")
+    .set("Authorization", `Bearer ${tokenMaria}`).expect(200)
     .expect("Content-Type", /json/);
-  const { body: perfilBruno } = await request(app).get("/usuarios/me")
-    .set("Authorization", `Bearer ${tokenBruno}`).expect(200);
+  const { body: perfilJose } = await request(app).get("/usuarios/me")
+    .set("Authorization", `Bearer ${tokenJose}`).expect(200);
 
-  assert.equal(perfilAna.id_usuario, ana.id_usuario);
-  assert.equal(perfilAna.email, "ana@pruebas.test");
-  assert.equal(perfilBruno.id_usuario, bruno.id_usuario);
-  assert.equal("passwordHash" in perfilAna, false);
+  assert.equal(perfilMaria.id_usuario, maria.id_usuario);
+  assert.equal(perfilMaria.email, "maria@pruebas.test");
+  assert.equal(perfilJose.id_usuario, jose.id_usuario);
+  assert.equal("passwordHash" in perfilMaria, false);
 });
 
 // 2.5 (acceso a recurso ajeno): la API responde 403, no 404
-test("Ana no puede modificar el perfil de Bruno", async () => {
-  const { bruno, tokenAna } = datos;
+test("Maria no puede modificar el perfil de Jose", async () => {
+  const { jose, tokenMaria } = datos;
 
-  const { body } = await request(app).put(`/usuarios/${bruno.id_usuario}`)
-    .set("Authorization", `Bearer ${tokenAna}`)
+  const { body } = await request(app).put(`/usuarios/${jose.id_usuario}`)
+    .set("Authorization", `Bearer ${tokenMaria}`)
     .send({ nombre: "Modificado" }).expect(403);
 
   assert.equal(body.mensaje, "No tienes permisos para modificar el perfil de otro usuario");
-  const guardado = await prisma.usuario.findUniqueOrThrow({ where: { id_usuario: bruno.id_usuario } });
-  assert.equal(guardado.nombre, "Bruno");
+  const guardado = await prisma.usuario.findUniqueOrThrow({ where: { id_usuario: jose.id_usuario } });
+  assert.equal(guardado.nombre, "Jose");
 });
 
 // 2.6: aserciones significativas: estado 409, mensaje del cuerpo y un único registro en la base.
@@ -97,10 +97,10 @@ test("Crear un rubro duplicado devuelve 409 y conserva un solo registro", async 
 
 // 2.2: rol que no corresponde → 403, con estado, cuerpo y sin cambios en la base.
 test("Un artesano no puede crear un rubro: devuelve 403 y no se guarda nada", async () => {
-  const { tokenAna } = datos;
+  const { tokenMaria } = datos;
   const antes = await prisma.rubro.count();
 
-  const { body } = await crearRubro(tokenAna, { nom_rubro: "Cerámica" }).expect(403);
+  const { body } = await crearRubro(tokenMaria, { nom_rubro: "Cerámica" }).expect(403);
 
   assert.equal(body.mensaje, "No tiene permiso para esta operación.");
   assert.equal(await prisma.rubro.count(), antes);
