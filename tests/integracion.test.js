@@ -1,7 +1,7 @@
 import { test, before, beforeEach, after } from "node:test";
 import assert from "node:assert/strict";
 import request from "supertest";
-import { crearEscenario } from "./helpers/escenario.js";
+import { crearEscenario } from "./helpers/escenario-cur.js";
 
 // Protección: Para no ejecutar por error en entorno de desarrollo.
 // 2.4: aserciones de NODE_ENV y del nombre de la base, antes de importar la app.
