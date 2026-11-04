@@ -1,65 +1,73 @@
-// ==========================================
-// ESQUEMAS DE PRODUCTOS
-// ==========================================
-export const NuevoProducto = {
-    type: "object",
-    properties: {
-        nom_producto: { type: "string", example: "Poncho de vicuña tejido a mano" },
-        desc_producto: { type: "string", example: "Poncho tradicional con tintes naturales de la región." },
-        precio: { type: "number", example: 150000 },
-        std_producto: { type: "boolean", example: true },
-        artesanoId: { type: "integer", example: 1 }
-    },
-    required: ["nom_producto", "precio"]
-};
+import { zodToJsonSchema } from "zod-to-json-schema";
+
+// 1. IMPORTACIONES DE TUS VALIDADORES ZOD
+import { asignarStandSchema } from "../validators/artesano.schema.js"; 
+import { crearProductoSchema, actualizarProductoSchema } from "../validators/producto.schema.js"; 
+import { actualizarPostulacionSchema, evaluarPostulacionSchema } from "../validators/postulacion.schema.js";
+
+// 2. FUNCIÓN AYUDANTE (Convierte Zod a OpenAPI 3.0 e inyecta el ejemplo)
+const desdeZod = (esquema, example) => ({
+  ...zodToJsonSchema(esquema, { target: "openapi-3.0", io: "input" }),
+  example
+});
 
 // ==========================================
 // ESQUEMAS DE ARTESANOS
 // ==========================================
-export const AsignacionStand = {
-    type: "object",
-    properties: {
-        standId: { type: "integer", example: 45 }
-    },
-    required: ["standId"]
-};
+export const AsignacionStand = desdeZod(asignarStandSchema, {
+    standId: 45
+});
 
-export const ActualizarArtesano = {
-    type: "object",
-    properties: {
-        nombre: { type: "string", example: "María" },
-        apellido: { type: "string", example: "Gómez" },
-        celular: { type: "string", example: "3834123456" },
-        rubro: { type: "string", example: "Textil" }
-    }
-};
+// ==========================================
+// ESQUEMAS DE PRODUCTOS
+// ==========================================
+
+const schemaNuevoProductoLimpio = crearProductoSchema.omit({ 
+    std_producto: true, 
+    artesanoId: true 
+});
+
+export const NuevoProducto = desdeZod(schemaNuevoProductoLimpio, {
+    nom_producto: "Poncho de vicuña tejido a mano",
+    desc_producto: "Poncho tradicional con tintes naturales de la región.",
+    precio: 150000
+});
+
+export const ActualizarProducto = desdeZod(actualizarProductoSchema, {
+    precio: 160000
+});
 
 // ==========================================
 // ESQUEMAS DE POSTULACIONES
 // ==========================================
-export const ActualizarPostulacion = {
+export const ActualizarPostulacion = desdeZod(actualizarPostulacionSchema, {
+    dni: "12345678",
+    celular: "3834123456",
+    nom_emprend: "Artesanías del Valle",
+    desc_emprend: "Fabricación de piezas únicas en arcilla.",
+    trayectoria: "5 años de experiencia comprobable",
+    rubroId: 2,
+    provincia: "Catamarca",
+    localidad: "BELEN"
+});
+
+export const EvaluarPostulacion = desdeZod(evaluarPostulacionSchema, {
+    std_postulacion: "APROBADA",
+    observacion: "La postulación cumple con todos los requisitos y fotos solicitadas."
+});
+
+// ==========================================
+// RESPUESTAS Y PARÁMETROS REUTILIZABLES 
+// ==========================================
+export const ErrorApi = {
     type: "object",
     properties: {
-        dni: { type: "string", example: "12345678" },
-        celular: { type: "string", example: "3834123456" },
-        nom_emprend: { type: "string", example: "Artesanías del Valle" },
-        desc_emprend: { type: "string", example: "Fabricación de piezas únicas en arcilla." },
-        trayectoria: { type: "string", example: "5 años de experiencia comprobable" },
-        rubroId: { type: "integer", example: 2 },
-        provincia: { type: "string", example: "Catamarca" },
-        localidad: { type: "string", example: "BELEN" }
-    }
+        mensaje: { type: "string", example: "Datos inválidos" },
+        detalles: { type: "array", items: { type: "string" } }
+    },
+    required: ["mensaje"]
 };
 
-export const EvaluarPostulacion = {
-    type: "object",
-    properties: {
-        std_postulacion: { 
-            type: "string", 
-            enum: ['EN_REVISION', 'REVISION_REQUERIDA', 'APROBADA', 'RECHAZADA'], 
-            example: "APROBADA" 
-        },
-        observacion: { type: "string", example: "La postulación cumple con todos los requisitos y fotos solicitadas." }
-    },
-    required: ["std_postulacion"]
-};
+export const IdRuta = { type: "integer", minimum: 1 };
+export const Pagina = { type: "integer", minimum: 1, default: 1 };
+export const Limite = { type: "integer", minimum: 1, maximum: 100, default: 10 };
