@@ -41,7 +41,7 @@ app.use('/sectores', sectorRoutes)
 app.use('/stands', standRoutes)
 app.use('/api/ubicaciones', ubicacionesRoutes);
 
-// Documentación de la API (Swagger UI)
+// 1.1: Swagger UI se publica en /docs, antes del manejador 404 (notFoundMiddleware).
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 // Bienvenida
@@ -52,7 +52,10 @@ app.get( '/', ( req, res ) => {
 app.use( notFoundMiddleware ) // Middleware para manejar rutas no encontradas
 app.use( errorMiddleware ) // Middleware para manejar errores
 
-app.listen( PORT, () => {
-  console.log( `Servidor escuchando en el puerto http://localhost:${PORT}` )
-  iniciarLimpiezaRevocaciones();
-} )
+if (process.env.NODE_ENV !== "test")
+  app.listen(PORT, () => {
+    console.log(`Servidor iniciado en puerto ${PORT}`);
+    iniciarLimpiezaRevocaciones();
+  });
+
+export default app;
