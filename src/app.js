@@ -41,7 +41,7 @@ app.use('/sectores', sectorRoutes)
 app.use('/stands', standRoutes)
 app.use('/api/ubicaciones', ubicacionesRoutes);
 
-// Documentación de la API (Swagger UI)
+// 1.1: Swagger UI se publica en /docs, antes del manejador 404 (notFoundMiddleware).
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 // Bienvenida

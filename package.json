@@ -31,7 +31,8 @@
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.23.0",
     "swagger-ui-express": "^5.0.1",
-    "zod": "^4.6.5"
+    "zod": "^4.6.5",
+    "zod-to-json-schema": "^3.25.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
