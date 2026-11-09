@@ -1,7 +1,7 @@
 import request from "supertest";
 import bcrypt from "bcrypt";
 
-// Prepara el administrador de pruebas (definido en .env.test), un rubro y dos artesanos: Ana y Bruno.
+// Prepara el administrador de pruebas (definido en .env.test), un rubro y dos artesanos: Maria y Jose.
 export async function crearEscenario(app, prisma) {
   const password = "ClaveDePrueba2026!";
 
@@ -52,8 +52,8 @@ export async function crearEscenario(app, prisma) {
     return { usuario, token: sesion.token };
   };
 
-  const { usuario: maria, token: tokenAna } = await registrar("Maria", 0);
-  const { usuario: jose, token: tokenBruno } = await registrar("Jose", 1);
+  const { usuario: maria, token: tokenMaria } = await registrar("Maria", 0);
+  const { usuario: jose, token: tokenJose } = await registrar("Jose", 1);
 
-  return { admin, tokenAdmin, rubro, ana, tokenAna, bruno, tokenBruno };
+  return { admin, tokenAdmin, rubro, maria, tokenMaria, jose, tokenJose };
 }

@@ -18,8 +18,8 @@
     "start": "node src/app.js",
     "dev": "node --watch src/app.js",
     "docs": "node generar-docs.js",
-    "test": "node --env-file=.env.test --test tests/auth.test.js tests/rubro-schema.test.js tests/usuario-schema.test.js",
-    "test:integracion": "node --env-file=.env.test --test tests/integracion.test.js",
+    "test": "node --env-file=.env.test --test --test-concurrency=1 \"tests/!(integracion-)*.test.js\"",
+    "test:integracion": "node --env-file=.env.test --test --test-concurrency=1 \"tests/integracion-*.test.js\"",
     "db:test:preparar": "node --env-file=.env.test node_modules/prisma/build/index.js migrate dev"
   },
   "dependencies": {
