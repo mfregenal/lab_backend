@@ -17,7 +17,10 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "node --watch src/app.js",
-    "docs": "node generar-docs.js"
+    "docs": "node generar-docs.js",
+    "test": "node --env-file=.env.test --test tests/auth.test.js tests/rubro-schema.test.js tests/usuario-schema.test.js",
+    "test:integracion": "node --env-file=.env.test --test tests/integracion.test.js",
+    "db:test:preparar": "node --env-file=.env.test node_modules/prisma/build/index.js migrate dev"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
@@ -34,6 +37,7 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "prisma": "^7.10.0",
+    "supertest": "^7.3.1",
     "swagger-autogen": "^2.23.7"
   },
   "allowScripts": {
