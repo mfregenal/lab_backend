@@ -22,6 +22,11 @@ import {
 import { autenticarUsuario } from '../middlewares/autenticacion.middleware.js'
 import { autorizarRoles } from '../middlewares/autorizacion.middleware.js'
 
+// Documentación OpenAPI de este router (comentarios #swagger de cada operación):
+// 1.3: protegidas con #swagger.security = [{ bearerAuth: [] }]; las públicas no declaran seguridad.
+// 1.4: cada operación tiene tags, summary y parámetros de ruta/consulta ($ref a IdRuta, Pagina, Limite, etc.).
+// 1.5: se listan todas las respuestas posibles; una por operación incluye el esquema ErrorApi y un ejemplo.
+// 1.6: los códigos, cuerpos y reglas documentados coinciden con los middlewares y servicios.
 const router = express.Router()
 
 router.get('/',
@@ -40,7 +45,7 @@ router.get('/',
     #swagger.responses[200] = { description: "Listado paginado de usuarios." }
     #swagger.responses[400] = { description: "Parámetros de consulta inválidos o cabecera Bearer mal formada." }
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
-    #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido." }
+    #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "No tiene permiso para esta operación."} } } }
   */
   autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarConsultaUsuario, obtenerUsuarios)
 
@@ -52,7 +57,7 @@ router.post('/',
     #swagger.requestBody = { required: true, content: { "application/json": { schema: { $ref: "#/components/schemas/NuevoUsuario" } } } }
     #swagger.responses[201] = { description: "Usuario y postulación creados." }
     #swagger.responses[400] = { description: "Cuerpo inválido." }
-    #swagger.responses[404] = { description: "El rubro de la postulación no existe." }
+    #swagger.responses[404] = { description: "El rubro de la postulación no existe.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "El rubro con ID 999 no existe", "detalles": {}} } } }
     #swagger.responses[409] = { description: "El email o el DNI ya están en uso." }
   */
   validarCreacionUsuario, crearUsuario)
@@ -65,7 +70,7 @@ router.post('/login',
     #swagger.requestBody = { required: true, content: { "application/json": { schema: { $ref: "#/components/schemas/InicioSesion" } } } }
     #swagger.responses[200] = { description: "Sesión iniciada." }
     #swagger.responses[400] = { description: "Cuerpo inválido." }
-    #swagger.responses[401] = { description: "Email o contraseña incorrectos." }
+    #swagger.responses[401] = { description: "Email o contraseña incorrectos.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "Email o contraseña incorrectos", "detalles": {}} } } }
     #swagger.responses[403] = { description: "La cuenta está inactiva." }
   */
   validarInicioSesion, iniciarSesion)
@@ -78,7 +83,7 @@ router.post('/login',
     #swagger.security = [{ bearerAuth: [] }]
     #swagger.responses[200] = { description: "Perfil del usuario autenticado." }
     #swagger.responses[400] = { description: "Cabecera Bearer mal formada." }
-    #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
+    #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "Se requiere un token de acceso."} } } }
     #swagger.responses[403] = { description: "La cuenta está inactiva." }
   */
   autenticarUsuario, obtenerMiPerfil)
@@ -91,7 +96,7 @@ router.post('/login',
     #swagger.security = [{ bearerAuth: [] }]
     #swagger.responses[204] = { description: "Sesión cerrada, sin contenido." }
     #swagger.responses[400] = { description: "Cabecera Bearer mal formada." }
-    #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
+    #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "El token es inválido, ha vencido o fue revocado."} } } }
     #swagger.responses[403] = { description: "La cuenta está inactiva." }
   */
   autenticarUsuario, cerrarSesion)
@@ -106,7 +111,7 @@ router.post('/registro-administrador',
     #swagger.responses[201] = { description: "Administrador creado." }
     #swagger.responses[400] = { description: "Cuerpo inválido o cabecera Bearer mal formada." }
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
-    #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido." }
+    #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "No tiene permiso para esta operación."} } } }
     #swagger.responses[409] = { description: "El email ya está en uso." }
   */
   autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarCreacionAdministrador, crearAdministrador)
@@ -124,7 +129,7 @@ router.patch('/:id/activo',
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
     #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido." }
     #swagger.responses[404] = { description: "Usuario inexistente." }
-    #swagger.responses[409] = { description: "Debe quedar al menos un administrador activo." }
+    #swagger.responses[409] = { description: "Debe quedar al menos un administrador activo.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "Debe quedar al menos un administrador activo", "detalles": {}} } } }
   */
   autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarId, validarActualizacionEstadoUsuario, actualizarEstadoUsuario)
 
@@ -139,7 +144,7 @@ router.get('/:id',
     #swagger.responses[400] = { description: "ID inválido o cabecera Bearer mal formada." }
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
     #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido." }
-    #swagger.responses[404] = { description: "Usuario inexistente." }
+    #swagger.responses[404] = { description: "Usuario inexistente.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "Usuario no encontrado", "detalles": {}} } } }
   */
   autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarId, obtenerUsuarioPorId)
 
@@ -154,7 +159,7 @@ router.put('/:id',
     #swagger.responses[200] = { description: "Usuario actualizado." }
     #swagger.responses[400] = { description: "ID o cuerpo inválido, o cabecera Bearer mal formada." }
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
-    #swagger.responses[403] = { description: "Cuenta inactiva, rol no permitido o perfil de otro usuario." }
+    #swagger.responses[403] = { description: "Cuenta inactiva, rol no permitido o perfil de otro usuario.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "No tienes permisos para modificar el perfil de otro usuario", "detalles": {}} } } }
     #swagger.responses[404] = { description: "Usuario inexistente." }
     #swagger.responses[409] = { description: "El email ya está en uso o debe quedar al menos un administrador activo." }
   */
@@ -172,7 +177,7 @@ router.delete('/:id',
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
     #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido." }
     #swagger.responses[404] = { description: "Usuario inexistente." }
-    #swagger.responses[409] = { description: "No se puede eliminar al último administrador activo." }
+    #swagger.responses[409] = { description: "No se puede eliminar al último administrador activo.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "No se puede eliminar al último administrador activo", "detalles": {}} } } }
   */
   autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarId, eliminarUsuario)
 
