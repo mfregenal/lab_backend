@@ -1,4 +1,7 @@
-import { nullable, z } from "zod";
+import { zodToJsonSchema } from "zod-to-json-schema";
+import { crearPabellonSchema } from "../validators/pabellon.schema.js";
+import { crearSectorSchema } from "../validators/sector.schema.js";
+import { crearStandSchema } from "../validators/stand.schema.js";
 
 export const ErrorApi = {
     type: "object",
@@ -9,6 +12,22 @@ export const ErrorApi = {
     example: {
         mensaje: "Descripción detallada del error."
     }
+};
+
+export const NuevoPabellon = zodToJsonSchema(crearPabellonSchema, { target: "openapi3", io: "input" });
+export const NuevoSector = zodToJsonSchema(crearSectorSchema, { target: "openapi3", io: "input" });
+export const NuevoStand = zodToJsonSchema(crearStandSchema, { target: "openapi3", io: "input" });
+
+export const ListadoProvincias = {
+    type: "array",
+    items: { type: "string" },
+    example: ["Catamarca", "Córdoba", "Jujuy"]
+};
+
+export const ListadoLocalidades = {
+    type: "array",
+    items: { type: "string" },
+    example: ["San Fernando del Valle de Catamarca", "Valle Viejo"]
 };
 
 export const PabellonDetalle = {
@@ -26,20 +45,6 @@ export const PabellonDetalle = {
     }
 };
 
-export const NuevoPabellon = {
-    type: "object",
-    required: ["nom_pabellon"],
-    properties: {
-        nom_pabellon: { type: "string" },
-        desc_pabellon: { type: "string" }
-    },
-    example: {
-        nom_pabellon: "Pabellón Turismo y Diseño",
-        desc_pabellon: "Pabellón interactivo y exposiciones."
-    }
-};
-
-
 export const SectorDetalle = {
     type: "object",
     required: ["id_sector", "nom_sector", "pabellonId"],
@@ -55,20 +60,6 @@ export const SectorDetalle = {
         pabellonId: 1
     }
 };
-
-export const NuevoSector = {
-    type: "object",
-    required: ["nom_sector", "pabellonId"],
-    properties: {
-        nom_sector: { type: "string" },
-        pabellonId: { type: "integer" }
-    },
-    example: {
-        nom_sector: "Sector Cerámica",
-        pabellonId: 1
-    }
-};
-
 
 export const StandDetalle = {
     type: "object",
@@ -119,58 +110,4 @@ export const RespuestaStandsPaginada = {
             }
         }
     }
-};
-
-export const NuevoStand = {
-    type: "object",
-    required: ["codigo", "sectorId"],
-    properties: {
-        codigo: { type: "string" },
-        latitud: { type: "number", format: "float", nullable: true },
-        longitud: { type: "number", format: "float", nullable: true },
-        std_stand: {
-            type: "string",
-            enum: ["DISPONIBLE", "OCUPADO", "MANTENIMIENTO"],
-            default: "MANTENIMIENTO"
-        },
-        sectorId: { type: "integer" }
-    },
-    example: {
-        codigo: "ST-01",
-        latitud: -28.4682,
-        longitud: -65.7795,
-        std_stand: "MANTENIMIENTO",
-        sectorId: 2
-    }
-};
-
-
-export const ListadoProvincias = {
-    type: "array",
-    items: {
-        type: "string"
-    },
-    example: [
-        "Catamarca",
-        "Córdoba",
-        "Jujuy",
-        "La Rioja",
-        "Salta",
-        "Tucumán"
-    ]
-};
-
-export const ListadoLocalidades = {
-    type: "array",
-    items: {
-        type: "string"
-    },
-    example: [
-        "San Fernando del Valle de Catamarca",
-        "Valle Viejo",
-        "Fray Mamerto Esquiú",
-        "Andalgalá",
-        "Belén",
-        "Tinogasta"
-    ]
 };
