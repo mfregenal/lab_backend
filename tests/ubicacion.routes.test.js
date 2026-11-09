@@ -1,8 +1,7 @@
-import { test, after } from "node:test"; // No necesitamos beforeEach
+import { test, after } from "node:test"; 
 import assert from "node:assert/strict";
 
 assert.equal(process.env.NODE_ENV, "test", "El entorno debe ser 'test'");
-// En ubicaciones no tocamos la BD, pero si Prisma arranca con la app, lo validamos y cerramos
 assert.ok(process.env.DATABASE_URL.includes("_test"));
 
 import request from "supertest";
@@ -22,5 +21,5 @@ test("GET /api/ubicaciones/localidades/:provincia devuelve 404 si no existe", as
 });
 
 after(async () => {
-    await prisma.$disconnect(); // Desconectamos por prolijidad al terminar el archivo
+    await prisma.$disconnect();
 });
