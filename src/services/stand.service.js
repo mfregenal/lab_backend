@@ -2,7 +2,7 @@ import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
 
 export const crearStand = async (datosStand) => {
-    const { codigo, latitud, longitud,sectorId, id_sector } = datosStand;
+    const { codigo, latitud, longitud, sectorId, id_sector, std_stand } = datosStand;
     const sectorIdNum = Number(sectorId ?? id_sector);
 
     const sectorExiste = await prisma.sector.findUnique({
@@ -10,7 +10,7 @@ export const crearStand = async (datosStand) => {
     });
 
     if (!sectorExiste) {
-        throw crearError(`El sector con ID ${id_sector} no existe.`, 400);
+        throw crearError(`El sector con ID ${sectorIdNum} no existe.`, 404);
     }
 
     const codigoExiste = await prisma.stand.findFirst({
@@ -31,6 +31,8 @@ export const crearStand = async (datosStand) => {
             codigo,
             latitud: latitud ?? null,
             longitud: longitud ?? null,
+            // Un stand nuevo queda disponible para asignarse, salvo que se indique mantenimiento.
+            std_stand: std_stand ?? 'DISPONIBLE',
             sectorId: sectorIdNum,
         },
         include: {
@@ -104,21 +106,14 @@ export const consultarStand = async (criteriosConsulta) => {
                         pabellon: true,
                     },
                 },
+                // Datos de presentación únicamente: sin email, DNI, celular ni ids internos.
                 artesano: {
-                    include: {
-                        usuario: {
-                            select: {
-                                id_usuario: true,
-                                nombre: true,
-                                apellido: true,
-                                email: true,
-                            },
-                        },
+                    select: {
+                        usuario: { select: { nombre: true, apellido: true } },
                         postulacion: {
                             select: {
-                                id_postulacion: true,
                                 nom_emprend: true,
-                                rubro: true,
+                                rubro: { select: { id_rubro: true, nom_rubro: true } },
                             },
                         },
                     },
@@ -152,11 +147,14 @@ export const obtenerStandPorId = async (id) => {
                     pabellon: true,
                 },
             },
+            // Datos de presentación únicamente: sin email, DNI, celular ni ids internos.
             artesano: {
-                include: {
+                select: {
+                    usuario: { select: { nombre: true, apellido: true } },
                     postulacion: {
-                        include: {
-                            rubro: true,
+                        select: {
+                            nom_emprend: true,
+                            rubro: { select: { id_rubro: true, nom_rubro: true } },
                         },
                     },
                 },
@@ -173,18 +171,29 @@ export const actualizarStand = async (id, datos) => {
     const idNum = Number(id);
 
     const standActual = await prisma.stand.findUnique({
-        where: { id_stand: idNum }
+        where: { id_stand: idNum },
+        include: { artesano: { select: { id_artesano: true } } }
     });
     if (!standActual) throw crearError('Stand no encontrado', 404);
 
     if (datos.codigo && datos.codigo.toLowerCase() !== standActual.codigo.toLowerCase()) {
-        const existe = await prisma.stand.findUnique({
+        const existe = await prisma.stand.findFirst({
             where: {
                 codigo: { equals: datos.codigo, mode: 'insensitive' },
                 NOT: { id_stand: idNum },
             },
         });
         if (existe) throw crearError('El codigo ya se encuentra en uso', 409);
+    }
+
+    // El estado debe ser coherente con la asignación: OCUPADO si y solo si tiene un artesano.
+    if (datos.std_stand !== undefined) {
+        if (datos.std_stand === 'OCUPADO' && !standActual.artesano) {
+            throw crearError('Un stand solo puede estar OCUPADO si tiene un artesano asignado. Use la asignación de stand del artesano.', 409);
+        }
+        if (datos.std_stand !== 'OCUPADO' && standActual.artesano) {
+            throw crearError('El stand tiene un artesano asignado y debe permanecer OCUPADO.', 409);
+        }
     }
 
     // Si actualizan el sector padre, verificar que exista

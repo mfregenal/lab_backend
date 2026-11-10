@@ -17,6 +17,9 @@ export const crearStandSchema = z.object({
         .max(180)
         .optional()
         .nullable(),
+    std_stand: z.enum(["DISPONIBLE", "MANTENIMIENTO"], {
+        error: "Al crear, el estado solo puede ser DISPONIBLE o MANTENIMIENTO.",
+    }).optional(),
     sectorId: z.coerce
         .number({ error: (i) => i.input === undefined ? "El ID del sector es obligatorio." : undefined })
         .int("Debe ser un número entero.")

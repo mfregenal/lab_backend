@@ -128,7 +128,7 @@ router.get('/:id', validarId, /*
 router.post('/', autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarCreacionStand, /* 
   #swagger.tags = ["Stands"]
   #swagger.summary = "Crear un nuevo stand"
-  #swagger.description = "Registra un stand en un sector. Requiere token Bearer con rol ADMINISTRADOR."
+  #swagger.description = "Registra un stand en un sector. Si no se indica std_stand, queda DISPONIBLE para poder asignarse; también puede crearse en MANTENIMIENTO. Requiere token Bearer con rol ADMINISTRADOR."
   #swagger.security = [{ "bearerAuth": [] }]
   #swagger.auto = false
   #swagger.requestBody = {
@@ -148,7 +148,7 @@ router.post('/', autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarCrea
     }
   }
   #swagger.responses[400] = {
-    description: "Cuerpo inválido o el sector indicado no existe.",
+    description: "Cuerpo inválido.",
     content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" } } }
   }
   #swagger.responses[401] = {
@@ -157,6 +157,10 @@ router.post('/', autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarCrea
   }
   #swagger.responses[403] = {
     description: "Acceso denegado: se requiere rol ADMINISTRADOR.",
+    content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" } } }
+  }
+  #swagger.responses[404] = {
+    description: "El sector indicado no existe.",
     content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" } } }
   }
   #swagger.responses[409] = {
@@ -169,7 +173,7 @@ router.post('/', autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarCrea
 router.put('/:id', autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarId, validarActualizacionStand, /* 
   #swagger.tags = ["Stands"]
   #swagger.summary = "Actualizar datos de un stand"
-  #swagger.description = "Modifica los datos de un stand existente. Requiere rol ADMINISTRADOR."
+  #swagger.description = "Modifica los datos de un stand existente. El estado debe ser coherente con la asignación: OCUPADO solo si tiene un artesano asignado, y un stand con artesano debe permanecer OCUPADO. Requiere rol ADMINISTRADOR."
   #swagger.security = [{ "bearerAuth": [] }]
   #swagger.auto = false
   #swagger.parameters['id'] = {
@@ -211,7 +215,7 @@ router.put('/:id', autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarId
     content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" } } }
   }
   #swagger.responses[409] = {
-    description: "Conflicto: el código de stand ya está en uso por otro registro.",
+    description: "Conflicto: el código ya está en uso por otro stand, o el estado indicado contradice la asignación del artesano.",
     content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" } } }
   }
 */ actualizarStand);
