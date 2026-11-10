@@ -19,6 +19,17 @@ export const obtenerArtesanos = async (req, res, next) => {
     }
 };
 
+export const obtenerArtesanosPublicos = async (req, res, next) => {
+    try {
+        const respuesta = await obtenerArtesanosService(req.queryValido, true);
+        res.json(respuesta);
+    } catch (error) {
+        console.error(error);
+        if (error.status || error.statusCode) return next(error);
+        next(crearError('Error al obtener los artesanos', 500));
+    }
+};
+
 export const obtenerArtesanoId = async (req, res, next) => {
     try {
         const id = req.id; 

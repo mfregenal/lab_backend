@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   obtenerArtesanos,
+  obtenerArtesanosPublicos,
   obtenerArtesanoId,
   asignarStand,
   actualizarArtesano,
@@ -34,8 +35,31 @@ router.get('/',
     obtenerArtesanos
 );
 
-router.get('/:id', 
-    /* 
+// Debe declararse antes de '/:id'; de lo contrario "publicos" se interpretaría como un id.
+router.get('/publicos',
+    /*
+    #swagger.tags = ['Artesanos']
+    #swagger.summary = 'Listar artesanos (público)'
+    #swagger.description = 'Listado público de artesanos aprobados, con paginación y filtros. Devuelve solo nombre, apellido, emprendimiento, rubro, provincia, localidad y código de stand. No requiere token.'
+    #swagger.security = []
+    #swagger.parameters['nombre'] = { in: 'query', type: 'string', description: 'Filtrar por nombre' }
+    #swagger.parameters['apellido'] = { in: 'query', type: 'string', description: 'Filtrar por apellido' }
+    #swagger.parameters['rubro'] = { in: 'query', type: 'string', description: 'Filtrar por rubro' }
+    #swagger.parameters['provincia'] = { in: 'query', type: 'string', description: 'Filtrar por provincia' }
+    #swagger.parameters['localidad'] = { in: 'query', type: 'string', description: 'Filtrar por localidad' }
+    #swagger.parameters['stand'] = { in: 'query', type: 'string', description: 'Filtrar por código de stand' }
+    #swagger.parameters['pagina'] = { in: 'query', schema: { $ref: '#/components/schemas/Pagina' } }
+    #swagger.parameters['limite'] = { in: 'query', schema: { $ref: '#/components/schemas/Limite' } }
+    #swagger.responses[200] = { description: 'Lista pública de artesanos obtenida exitosamente.' }
+    #swagger.responses[400] = { description: 'Parámetros de consulta inválidos.' }
+    */
+    loggerConsultas,
+    validarConsultaArtesanos,
+    obtenerArtesanosPublicos
+);
+
+router.get('/:id',
+    /*
     #swagger.tags = ['Artesanos']
     #swagger.summary = 'Obtener un artesano por ID'
     #swagger.description = 'Busca y devuelve los detalles de un perfil de artesano. Requiere rol de ARTESANO o ADMINISTRADOR.'

@@ -1,7 +1,7 @@
 import prisma from '../config/prisma.js';
 import { crearError } from '../utils/errores.js';
 
-export const obtenerArtesanosService = async (filtrosDTO) => {
+export const obtenerArtesanosService = async (filtrosDTO, publico = false) => {
     const { nombre, apellido, rubro, provincia, localidad, stand, pagina, limite, ordenPor, direccion } = filtrosDTO;
 
     const condiciones = {};
@@ -33,17 +33,38 @@ export const obtenerArtesanosService = async (filtrosDTO) => {
     const totalRegistros = await prisma.artesano.count({ where: condiciones });
     const skip = (pagina - 1) * limite;
 
+    // Vista pública: solo datos de presentación, sin email ni ids internos.
+    const relaciones = publico
+        ? {
+            select: {
+                usuario: { select: { nombre: true, apellido: true } },
+                postulacion: {
+                    select: {
+                        nom_emprend: true,
+                        provincia: true,
+                        localidad: true,
+                        rubro: { select: { id_rubro: true, nom_rubro: true } }
+                    }
+                },
+                stand: { select: { codigo: true } }
+            }
+        }
+        : {
+            include: {
+                usuario: { select: { nombre: true, apellido: true, email: true } },
+                postulacion: {
+                    select: { nom_emprend: true, localidad: true, provincia: true, rubro: true }
+                },
+                stand: { select: { codigo: true } }
+            }
+        };
+
     const artesanos = await prisma.artesano.findMany({
         where: condiciones,
         skip: skip,
         take: limite,
-        include: {
-            usuario: { select: { nombre: true, apellido: true, email: true } },
-            postulacion: { 
-                select: { nom_emprend: true, localidad: true, provincia: true, rubro: true }
-            },
-            stand: { select: { codigo: true } }
-        }
+        orderBy: { id_artesano: 'asc' },
+        ...relaciones
     });
 
     return {
