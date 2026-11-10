@@ -154,6 +154,9 @@ export const eliminarPostulacionService = async (id) => {
         if (error.code === 'P2025') {
             throw crearError(`No existe una postulación con id ${id}`, 404);
         }
+        if (error.code === 'P2003') {
+            throw crearError('La postulación tiene un artesano asociado; elimine primero al artesano.', 409);
+        }
         throw error;
     }
 };

@@ -85,6 +85,7 @@ router.delete('/:id',
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado." }
     #swagger.responses[403] = { description: "Cuenta inactiva o rol ADMINISTRADOR requerido." }
     #swagger.responses[404] = { description: "Rubro inexistente.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "Rubro no encontrado", "detalles": {}} } } }
+    #swagger.responses[409] = { description: "El rubro está en uso por postulaciones y no puede eliminarse.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" } } } }
   */
   autenticarUsuario, autorizarRoles('ADMINISTRADOR'), validarId, eliminarRubro)
 

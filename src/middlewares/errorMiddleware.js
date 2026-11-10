@@ -5,6 +5,13 @@ export const errorMiddleware = (err, req, res, next) => {
     });
   }
 
+  // Clave foránea: el registro está relacionado con otros o la referencia no existe.
+  if (err.code === 'P2003') {
+    return res.status(409).json({
+      mensaje: 'No se puede completar la operación porque el registro está relacionado con otros datos.'
+    })
+  }
+
   const status = err.statusCode || err.status || 500
 
   if (status >= 500) {

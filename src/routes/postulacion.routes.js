@@ -129,10 +129,11 @@ router.delete('/:id',
     #swagger.responses[401] = { description: 'Token ausente o inválido.' }
     #swagger.responses[403] = { description: 'Acceso denegado. Exclusivo para ADMINISTRADOR.' }
     #swagger.responses[404] = { description: 'La postulación no existe.' }
+    #swagger.responses[409] = { description: 'La postulación tiene un artesano asociado; debe eliminarse primero el artesano.' }
     */
-    autenticarUsuario, 
-    autorizarRoles('ADMINISTRADOR'), 
-    validarId, 
+    autenticarUsuario,
+    autorizarRoles('ADMINISTRADOR'),
+    validarId,
     eliminarPostulacion
 );
 
