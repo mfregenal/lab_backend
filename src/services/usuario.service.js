@@ -10,7 +10,8 @@ const SELECT_PUBLIC_USER = {
     rol: true, 
     std_usuario: true, 
     createdAt: true, 
-    updatedAt: true
+    updatedAt: true,
+    postulacion: true
 }
 
 const FACTOR_COSTO = 10

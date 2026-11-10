@@ -75,13 +75,13 @@ router.post('/login',
   */
   validarInicioSesion, iniciarSesion)
 
-  router.get('/me',
+router.get('/me',
   /* #swagger.tags = ["Usuarios"]
     #swagger.summary = "Obtener mi perfil"
-    #swagger.description = "Requiere JWT y cuenta activa, con cualquier rol."
+    #swagger.description = "Requiere JWT y cuenta activa. Devuelve los datos del usuario autenticado, incluyendo su postulación si la tiene."
     #swagger.auto = false
     #swagger.security = [{ bearerAuth: [] }]
-    #swagger.responses[200] = { description: "Perfil del usuario autenticado." }
+    #swagger.responses[200] = { description: "Perfil del usuario autenticado y su postulación." }
     #swagger.responses[400] = { description: "Cabecera Bearer mal formada." }
     #swagger.responses[401] = { description: "Token ausente, inválido, vencido o revocado.", content: { "application/json": { schema: { $ref: "#/components/schemas/ErrorApi" }, example: {"mensaje": "Se requiere un token de acceso."} } } }
     #swagger.responses[403] = { description: "La cuenta está inactiva." }
