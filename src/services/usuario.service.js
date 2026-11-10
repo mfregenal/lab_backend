@@ -117,6 +117,12 @@ export const actualizar = async (id, datos, actor) => {
         throw crearError('No tienes permisos para modificar el perfil de otro usuario', 403)
     }
 
+    // La contraseña se guarda siempre como hash; el campo de la base es passwordHash.
+    const { contrasena, ...camposActualizables } = datos
+    if (contrasena !== undefined) {
+        camposActualizables.passwordHash = await bcrypt.hash(contrasena, FACTOR_COSTO)
+    }
+
     return transaccionSerializable(async (tx) => {
         const usuarioActual = await tx.usuario.findUnique({
             where: { id_usuario: id },
@@ -153,7 +159,7 @@ export const actualizar = async (id, datos, actor) => {
 
         return tx.usuario.update({
             where: { id_usuario: id },
-            data: datos,
+            data: camposActualizables,
             select: SELECT_PUBLIC_USER
         })
     })

@@ -6,7 +6,9 @@ const datosUsuarioSchema = z.object({
   apellido: z.string().min(2, "El apellido debe tener al menos 2 letras").max(50),
   email: z.string().email("Formato de email inválido").toLowerCase(),
   contrasena: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
-  rol: z.enum(['ARTESANO', 'ADMINISTRADOR']).optional().default('ARTESANO')
+  // Sin valor por defecto: en una actualización parcial no debe inyectarse un rol que no se envió.
+  // Al crear, el rol lo define el servicio (ARTESANO o ADMINISTRADOR según el endpoint).
+  rol: z.enum(['ARTESANO', 'ADMINISTRADOR']).optional()
 })
 
 /* ROLES */
