@@ -43,7 +43,7 @@ model Usuario {
   updatedAt       DateTime    @updatedAt
 
   artesano                Artesano?
-  postulaciones           Postulacion?  @relation("UsuarioPostula")
+  postulacion             Postulacion?  @relation("UsuarioPostula")
   postulacionesEvaluadas  Postulacion[] @relation("AdminEvalua")
 }
 
@@ -102,7 +102,7 @@ model Producto {
   id_producto     Int         @id @default(autoincrement())
   nom_producto    String
   desc_producto   String?
-  precio          Decimal
+  precio          Decimal     @db.Decimal(10, 2)
   std_producto    Boolean     @default(true)
 
   artesanoId      Int         
@@ -132,8 +132,8 @@ model Sector {
 model Stand {
   id_stand        Int         @id @default(autoincrement())
   codigo          String      @unique
-  latitud         Decimal?
-  longitud        Decimal?
+  latitud         Decimal?    @db.Decimal(10, 6)
+  longitud        Decimal?    @db.Decimal(10, 6)
   std_stand       EstadoStand @default(MANTENIMIENTO)
   
   sectorId        Int

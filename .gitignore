@@ -7,14 +7,8 @@ node_modules/
 !.env.example
 !.env.test.example
 
-/src/generated/prisma
-/prisma/migrations
-!/prisma/migrations/
-/prisma/migrations/*
-!/prisma/migrations/20261023141718/
+/src/generated
 
-crearPrimerAdmin.js
-generarProductos.js
 swagger-output.json
 
 .agents
