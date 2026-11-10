@@ -41,9 +41,10 @@ export const obtenerProductosService = async (filtrosDTO, usuario) => {
         orderBy: [{ [ordenPor]: direccion }, { id_producto: direccion }],
         include: {
             artesano: {
-                include: {
+                select: {
+                    id_artesano: true,
                     usuario: { select: { nombre: true, apellido: true } },
-                    postulacion: { select: { nom_emprend: true, rubro: true } },
+                    postulacion: { select: { nom_emprend: true, rubro: { select: { id_rubro: true, nom_rubro: true } } } },
                     stand: { select: { codigo: true } }
                 }
             }
@@ -66,7 +67,9 @@ export const obtenerProductoIdService = async (id, usuario) => {
         where: { id_producto: id },
         include: {
             artesano: {
-                include: {
+                select: {
+                    id_artesano: true,
+                    usuarioId: true, // solo para comprobar la pertenencia; no se devuelve
                     usuario: { select: { nombre: true, apellido: true } },
                     stand: { select: { codigo: true } }
                 }
@@ -86,7 +89,8 @@ export const obtenerProductoIdService = async (id, usuario) => {
         throw crearError(`No existe un producto con id ${id}`, 404);
     }
 
-    return producto;
+    const { usuarioId, ...artesano } = producto.artesano;
+    return { ...producto, artesano };
 };
 
 export const crearProductoService = async (dataDTO, usuario) => {
